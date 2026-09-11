@@ -37,24 +37,27 @@ export function Footer() {
   const parents = getParentCategories().slice(0, 5);
 
   return (
-    <footer className="mt-12 border-t border-cream-200 bg-white sm:mt-20">
-      <div className="container-pad grid gap-8 py-10 sm:grid-cols-2 sm:gap-10 sm:py-14 lg:grid-cols-4">
+    <footer className="mt-14 border-t border-cream-200/60 bg-henna-900 text-cream-100 sm:mt-24">
+      <div className="container-pad grid gap-10 py-12 sm:grid-cols-2 sm:gap-12 sm:py-16 lg:grid-cols-4">
         <div>
-          <Link href="/" className="text-2xl font-bold text-henna">
+          <Link href="/" className="font-display text-2xl font-semibold tracking-tight text-cream-50">
             {storeName}
           </Link>
-          <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream-200/70">
             {brand.tagline}. متجر نسائي فاخر لاستكيرات نقشات الحناء — تصاميم عصرية
             للمناسبات والأعراس والإطلالات اليومية.
           </p>
+          <div className="mt-5 h-px w-12 bg-gold-400/60" aria-hidden />
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold text-ink">روابط سريعة</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+            روابط سريعة
+          </h3>
+          <ul className="space-y-2.5 text-sm text-cream-200/75">
             {navLinks.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="transition hover:text-henna">
+                <Link href={l.href} className="transition hover:text-cream-50">
                   {l.label}
                 </Link>
               </li>
@@ -63,24 +66,28 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold text-ink">الأقسام</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+            الأقسام
+          </h3>
+          <ul className="space-y-2.5 text-sm text-cream-200/75">
             {parents.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/categories/${c.slug}`}
-                  className="transition hover:text-henna"
+                  className="transition hover:text-cream-50"
                 >
                   {c.name}
                 </Link>
               </li>
             ))}
           </ul>
-          <h3 className="mb-3 mt-6 text-sm font-bold text-ink">معلومات المتجر</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="mb-4 mt-8 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+            معلومات المتجر
+          </h3>
+          <ul className="space-y-2.5 text-sm text-cream-200/75">
             {infoLinks.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="transition hover:text-henna">
+                <Link href={l.href} className="transition hover:text-cream-50">
                   {l.label}
                 </Link>
               </li>
@@ -89,8 +96,10 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold text-ink">تواصل</h3>
-          <ul className="space-y-2 text-sm text-ink-muted">
+          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+            تواصل
+          </h3>
+          <ul className="space-y-2.5 text-sm text-cream-200/75">
             <li>الدفع: تحويل بنكي</li>
             <li>
               {delivery.deliveryLabel}: {delivery.deliveryEta}
@@ -101,23 +110,23 @@ export function Footer() {
                 href={`https://wa.me/${whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-semibold text-henna hover:underline"
+                className="font-medium text-gold-300 transition hover:text-gold-200"
               >
                 واتساب {whatsappDisplay}
               </a>
             </li>
             <li>
-              <Link href="/contact" className="font-semibold text-henna hover:underline">
+              <Link href="/contact" className="font-medium text-gold-300 transition hover:text-gold-200">
                 نموذج تواصل معنا
               </Link>
             </li>
-            <li className="pt-2 text-xs text-ink-light">
+            <li className="pt-2 text-xs text-cream-200/50">
               الأسعار بـ {brand.currency}
             </li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-cream-200 py-4 text-center text-xs text-ink-light">
+      <div className="border-t border-white/5 py-5 text-center text-[11px] tracking-wide text-cream-200/45">
         © {new Date().getFullYear()} {storeName}. جميع الحقوق محفوظة.
       </div>
     </footer>

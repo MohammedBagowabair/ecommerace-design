@@ -6,51 +6,45 @@ const occasions = [
     label: "عروس",
     href: "/categories/al-arous",
     icon: Crown,
-    tone: "from-henna-600 to-henna-800",
   },
   {
     label: "زفاف",
     href: "/categories/al-munasabat",
     icon: Heart,
-    tone: "from-gold-500 to-gold-600",
   },
   {
     label: "خطوبة",
     href: "/search?q=خطوبة",
     icon: Sparkles,
-    tone: "from-henna-500 to-gold-500",
   },
   {
     label: "عيد",
     href: "/search?q=عيد",
     icon: MoonStar,
-    tone: "from-ink to-henna-700",
   },
   {
     label: "حفلة",
     href: "/search?q=حفلة",
     icon: PartyPopper,
-    tone: "from-gold-600 to-henna-600",
   },
   {
     label: "يومية ناعمة",
     href: "/categories/naima",
     icon: Flower2,
-    tone: "from-henna-400 to-henna-600",
   },
 ];
 
 export function OccasionStrip() {
   return (
-    <section className="container-pad py-5 sm:py-8">
-      <div className="mb-3 flex items-end justify-between gap-3 sm:mb-4">
+    <section className="container-pad py-6 sm:py-9">
+      <div className="mb-4 flex items-end justify-between gap-3 sm:mb-5">
         <div>
           <p className="section-eyebrow hidden sm:block">للمناسبات</p>
           <h2 className="section-title mt-0 sm:mt-1">نقشات تليق بلحظتكِ</h2>
         </div>
         <Link
           href="/categories/al-munasabat"
-          className="min-h-10 inline-flex items-center text-xs font-semibold text-henna hover:text-henna-600 sm:text-sm"
+          className="min-h-10 inline-flex items-center text-xs font-medium text-henna transition hover:text-henna-700 sm:text-sm"
         >
           المزيد
         </Link>
@@ -62,14 +56,12 @@ export function OccasionStrip() {
             <Link
               key={o.label}
               href={o.href}
-              className="group flex min-w-[6.75rem] flex-col items-center gap-2.5 rounded-2xl bg-white p-3 shadow-card transition sm:min-w-0 sm:gap-3 sm:rounded-3xl sm:p-4 sm:hover:-translate-y-0.5 sm:hover:shadow-soft"
+              className="group flex min-w-[6.75rem] flex-col items-center gap-2.5 rounded-2xl bg-[#FFFCFA] p-3.5 shadow-gallery transition sm:min-w-0 sm:gap-3 sm:rounded-3xl sm:p-5 sm:hover:shadow-card"
             >
-              <span
-                className={`flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${o.tone} text-white shadow-sm transition motion-safe:group-hover:scale-105 sm:h-14 sm:w-14`}
-              >
-                <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-cream-100 text-henna transition group-hover:bg-henna group-hover:text-cream-50 sm:h-12 sm:w-12">
+                <Icon className="h-5 w-5" strokeWidth={1.5} />
               </span>
-              <span className="text-center text-xs font-bold text-ink sm:text-sm">
+              <span className="text-center text-xs font-medium text-ink sm:text-sm">
                 {o.label}
               </span>
             </Link>

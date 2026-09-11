@@ -106,11 +106,11 @@ export function Navbar() {
 
   return (
     <>
-    <header className="sticky top-0 z-50 border-b border-cream-200/70 bg-white/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-cream-200/40 bg-[#FFFCFA]/85 backdrop-blur-md">
       <div className="container-pad">
         {/* Desktop */}
-        <div className="hidden items-center gap-6 py-3.5 lg:flex">
-          <Link href="/" className="shrink-0 text-2xl font-bold tracking-tight text-henna transition hover:opacity-90">
+        <div className="hidden items-center gap-6 py-4 lg:flex">
+          <Link href="/" className="shrink-0 font-display text-2xl font-semibold tracking-tight text-henna transition hover:opacity-90">
             {brand.name}
           </Link>
 
@@ -120,10 +120,10 @@ export function Navbar() {
                 key={l.href}
                 href={l.href}
                 className={cn(
-                  "rounded-full px-3.5 py-2.5 text-sm font-semibold transition duration-250",
+                  "rounded-full px-3.5 py-2.5 text-sm font-medium transition duration-250",
                   pathname === l.href
-                    ? "bg-henna-50 text-henna"
-                    : "text-ink-muted hover:bg-cream-100 hover:text-ink"
+                    ? "bg-cream-100 text-henna"
+                    : "text-ink-muted hover:bg-cream-50 hover:text-ink"
                 )}
               >
                 {l.label}
@@ -134,7 +134,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={openSearch}
-            className="relative mx-auto flex max-w-md flex-1 items-center gap-2.5 rounded-full border border-cream-300 bg-cream-50 px-4 py-2.5 text-sm text-ink-light transition duration-250 hover:border-henna-200 hover:bg-white hover:shadow-sm"
+            className="relative mx-auto flex max-w-md flex-1 items-center gap-2.5 rounded-full border border-cream-300/70 bg-cream-50/60 px-4 py-2.5 text-sm text-ink-light transition duration-250 hover:border-cream-300 hover:bg-white"
           >
             <Search className="h-4 w-4 shrink-0" strokeWidth={1.75} />
             <span className="flex-1 text-start">ابحثي عن نقشات أو منتجات...</span>
@@ -227,13 +227,13 @@ export function Navbar() {
 
         {/* Mobile — one-hand friendly: brand + search + cart + menu */}
         <div className="flex items-center gap-1 py-2.5 lg:hidden">
-          <Link href="/" className="shrink-0 text-lg font-bold text-henna sm:text-xl">
+          <Link href="/" className="shrink-0 font-display text-lg font-semibold text-henna sm:text-xl">
             {brand.name}
           </Link>
           <button
             type="button"
             onClick={openSearch}
-            className="relative mx-0.5 flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-full border border-cream-300 bg-cream-50 px-3 py-2 text-xs text-ink-light"
+            className="relative mx-0.5 flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-full border border-cream-300/70 bg-cream-50/70 px-3 py-2 text-xs text-ink-light"
           >
             <Search className="h-4 w-4 shrink-0" strokeWidth={1.75} />
             <span className="truncate">ابحثي...</span>
@@ -277,17 +277,17 @@ export function Navbar() {
         />
         <aside
           className={cn(
-            "absolute inset-y-0 start-0 flex w-[min(20rem,88vw)] flex-col bg-white shadow-xl transition-transform duration-300 ease-out",
+            "absolute inset-y-0 start-0 flex w-[min(20rem,88vw)] flex-col bg-[#FFFCFA] shadow-float transition-transform duration-300 ease-out",
             open ? "translate-x-0" : "translate-x-full"
           )}
           role="dialog"
           aria-modal="true"
           aria-label="القائمة الرئيسية"
         >
-          <div className="flex h-14 items-center justify-between border-b border-cream-200 px-4">
+          <div className="flex h-14 items-center justify-between border-b border-cream-200/60 px-4">
             <Link
               href="/"
-              className="text-lg font-bold text-henna"
+              className="font-display text-lg font-semibold text-henna"
               onClick={() => setOpen(false)}
             >
               {brand.name}
@@ -311,8 +311,8 @@ export function Navbar() {
                   className={cn(
                     "rounded-2xl px-4 py-3.5 text-[15px] font-semibold transition",
                     pathname === l.href
-                      ? "bg-henna-50 text-henna"
-                      : "text-ink hover:bg-cream-100"
+                      ? "bg-cream-100 text-henna"
+                      : "text-ink hover:bg-cream-50"
                   )}
                 >
                   {l.label}
@@ -399,7 +399,7 @@ export function Navbar() {
                 <Link
                   href="/register"
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 rounded-2xl bg-henna-50 px-4 py-3.5 text-sm font-bold text-henna hover:bg-henna-100"
+                  className="flex items-center gap-3 rounded-2xl bg-henna px-4 py-3.5 text-sm font-semibold text-cream-50 hover:bg-henna-700"
                 >
                   <UserPlus className="h-4 w-4" strokeWidth={1.75} />
                   إنشاء حساب

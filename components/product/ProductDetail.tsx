@@ -160,7 +160,7 @@ export function ProductDetail({
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Gallery */}
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-[1.75rem] bg-cream-100 shadow-card">
+            <div className="relative aspect-square overflow-hidden rounded-[1.75rem] bg-cream-100 shadow-gallery sm:rounded-[2rem]">
               <SafeMedia
                 src={gallery[img] ?? product.images[0]}
                 alt={product.name}
@@ -210,7 +210,7 @@ export function ProductDetail({
                     onClick={() => setImg(i)}
                     className={cn(
                       "h-2 rounded-full transition-all duration-250",
-                      i === img ? "w-6 bg-ink" : "w-2 bg-ink/30 hover:bg-ink/50"
+                      i === img ? "w-6 bg-henna" : "w-2 bg-henna/25 hover:bg-henna/40"
                     )}
                     aria-label={`وسائط ${i + 1}`}
                   />
@@ -224,8 +224,8 @@ export function ProductDetail({
                   type="button"
                   onClick={() => setImg(i)}
                   className={cn(
-                    "relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-2xl border-2 transition duration-250",
-                    i === img ? "border-ink shadow-sm" : "border-transparent opacity-80 hover:opacity-100"
+                    "relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-2xl border transition duration-250",
+                    i === img ? "border-henna/40 shadow-sm" : "border-transparent opacity-75 hover:opacity-100"
                   )}
                 >
                   <SafeMedia src={src} alt="" fill className="object-cover" sizes="72px" muted />
@@ -238,7 +238,7 @@ export function ProductDetail({
           <div className="flex flex-col">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div className="min-w-0 flex-1 text-start">
-                <h1 className="text-2xl font-bold leading-snug tracking-tight text-ink sm:text-3xl">
+                <h1 className="font-display text-2xl font-semibold leading-snug tracking-tight text-ink sm:text-3xl">
                   {product.name}
                 </h1>
                 <p className="meta-sm mt-1.5 tracking-wide">{product.sku}</p>
@@ -269,10 +269,10 @@ export function ProductDetail({
               <StockBadge status={product.stockStatus} stock={product.stock} size="md" />
             </div>
 
-            <p className="mt-5 text-sm leading-relaxed text-ink-muted">{product.description}</p>
+            <p className="mt-6 text-sm leading-relaxed text-ink-muted sm:text-[15px] sm:leading-7">{product.description}</p>
 
             {product.info && (
-              <dl className="mt-6 grid gap-3 rounded-3xl bg-cream-50 p-4 text-sm sm:grid-cols-2 sm:p-5">
+              <dl className="mt-6 grid gap-3 rounded-3xl bg-cream-50/80 p-4 text-sm sm:grid-cols-2 sm:p-5">
                 {Object.entries(product.info).map(([k, v]) => (
                   <div key={k}>
                     <dt className="text-xs text-ink-light">{k}</dt>
@@ -310,7 +310,7 @@ export function ProductDetail({
             </div>
 
             {/* Desktop purchase block */}
-            <div className="mt-7 hidden rounded-3xl border border-cream-200 bg-white p-4 shadow-card lg:block">
+            <div className="mt-8 hidden rounded-3xl border border-cream-200/60 bg-[#FFFCFA] p-5 shadow-gallery lg:block">
               <div className="flex flex-wrap items-center gap-3">
                 <QuantitySelector
                   value={qty}

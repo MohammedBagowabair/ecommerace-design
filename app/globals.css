@@ -3,17 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #f7f5f1;
-  --foreground: #1c1917;
-  --henna: #6b3e2e;
-  --gold: #b8956a;
-  --blush: #f0e4de;
-  --muted: #6b6560;
-  --card: #ffffff;
+  --background: #f5f3ef;
+  --foreground: #2a211c;
+  --henna: #4a3228;
+  --gold: #c5a059;
+  --blush: #efe6e0;
+  --muted: #6e655e;
+  --card: #fffcf9;
   --radius: 1.5rem;
   --radius-btn: 9999px;
   --touch: 2.75rem; /* 44px */
-  --space-section: 2.5rem;
+  --space-section: 2.75rem;
 }
 
 html {
@@ -30,9 +30,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Consistent focus rings for keyboard users */
+/* Consistent focus rings for keyboard users — muted gold */
 :focus-visible {
-  outline: 2px solid #b88874;
+  outline: 2px solid #c5a059;
   outline-offset: 2px;
 }
 
@@ -46,60 +46,62 @@ a:focus:not(:focus-visible) {
     @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
   }
 
+  /* Luxury CTAs — refined solid primary, quiet secondary */
   .btn-primary {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white shadow-sm transition duration-250 hover:bg-henna-600 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-henna px-7 py-3 text-sm font-semibold tracking-wide text-cream-50 shadow-sm transition duration-250 hover:bg-henna-700 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
   }
 
   .btn-secondary {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-white/40 bg-white/20 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition duration-250 hover:bg-white/30 active:scale-[0.98];
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3 text-sm font-medium tracking-wide text-white backdrop-blur-md transition duration-250 hover:bg-white/20 active:scale-[0.98];
   }
 
   .btn-outline {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-henna-200 bg-white px-5 py-2.5 text-sm font-semibold text-henna-600 transition duration-250 hover:border-henna-400 hover:bg-henna-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-cream-300 bg-transparent px-5 py-2.5 text-sm font-medium tracking-wide text-henna-600 transition duration-250 hover:border-henna-300 hover:bg-cream-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-ink-muted transition duration-250 hover:bg-cream-100 hover:text-ink active:scale-[0.98];
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink-muted transition duration-250 hover:bg-cream-100 hover:text-ink active:scale-[0.98];
   }
 
   .btn-danger {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition duration-250 hover:bg-red-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-red-700/90 px-6 py-3 text-sm font-semibold text-white transition duration-250 hover:bg-red-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-admin {
-    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition duration-250 hover:bg-henna-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl bg-henna px-4 py-2 text-sm font-semibold text-white transition duration-250 hover:bg-henna-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-admin-outline {
     @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl border border-cream-300 bg-white px-4 py-2 text-sm font-semibold text-ink transition duration-250 hover:border-henna-200 hover:bg-henna-50 active:scale-[0.98];
   }
 
+  /* Gallery-like cards — soft shadow, no heavy borders */
   .card-soft {
-    @apply rounded-3xl bg-white shadow-card transition duration-300 hover:shadow-card-hover;
+    @apply rounded-3xl bg-[#FFFCFA] shadow-gallery transition duration-300 hover:shadow-card;
   }
 
   .card-panel {
-    @apply rounded-3xl border border-cream-200/80 bg-white shadow-card;
+    @apply rounded-3xl border border-cream-200/60 bg-[#FFFCFA] shadow-card;
   }
 
   .section-title {
-    @apply text-xl font-bold leading-snug tracking-tight text-ink sm:text-2xl;
+    @apply font-display text-xl font-semibold leading-snug tracking-tight text-ink sm:text-2xl;
   }
 
   .section-eyebrow {
-    @apply text-xs font-semibold tracking-wide text-gold-600;
+    @apply text-[11px] font-medium uppercase tracking-luxury-wide text-gold-600;
   }
 
   .input-pill {
-    @apply w-full rounded-full border border-cream-300 bg-cream-50 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+    @apply w-full rounded-full border border-cream-300/80 bg-cream-50/80 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
   }
 
   .input-field {
-    @apply w-full rounded-2xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+    @apply w-full rounded-2xl border border-cream-300/80 bg-cream-50/80 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
   }
 
   .textarea-field {
-    @apply w-full resize-none rounded-2xl border border-cream-300 bg-cream-50 px-4 py-3 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+    @apply w-full resize-none rounded-2xl border border-cream-300/80 bg-cream-50/80 px-4 py-3 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
   }
 
   .badge-pill {
@@ -107,7 +109,7 @@ a:focus:not(:focus-visible) {
   }
 
   .chip {
-    @apply inline-flex min-h-[2.5rem] items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition duration-250;
+    @apply inline-flex min-h-[2.5rem] items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-medium transition duration-250;
   }
 
   .chip-idle {
@@ -115,7 +117,7 @@ a:focus:not(:focus-visible) {
   }
 
   .chip-active {
-    @apply chip bg-ink text-white shadow-sm;
+    @apply chip bg-henna text-cream-50 shadow-sm;
   }
 
   .touch-target {
@@ -127,7 +129,7 @@ a:focus:not(:focus-visible) {
   }
 
   .page-title {
-    @apply text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+    @apply font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl;
   }
 
   .page-subtitle {
@@ -143,15 +145,15 @@ a:focus:not(:focus-visible) {
   }
 
   .trust-row {
-    @apply flex items-start gap-3 rounded-2xl bg-cream-50 px-3.5 py-3 text-sm;
+    @apply flex items-start gap-3 rounded-2xl bg-cream-50/90 px-3.5 py-3 text-sm;
   }
 
   .admin-card {
-    @apply rounded-2xl border border-cream-200 bg-white p-4 shadow-card sm:p-5;
+    @apply rounded-2xl border border-cream-200/80 bg-white p-4 shadow-card sm:p-5;
   }
 
   .admin-table-wrap {
-    @apply overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-card;
+    @apply overflow-hidden rounded-2xl border border-cream-200/80 bg-white shadow-card;
   }
 
   .admin-table {
@@ -175,15 +177,15 @@ a:focus:not(:focus-visible) {
   }
 
   .price-lg {
-    @apply text-lg font-bold tabular-nums text-henna sm:text-xl;
+    @apply text-lg font-semibold tabular-nums text-henna sm:text-xl;
   }
 
   .price-md {
-    @apply text-base font-bold tabular-nums text-henna;
+    @apply text-base font-semibold tabular-nums text-henna;
   }
 
   .meta-sm {
-    @apply text-[11px] text-ink-light;
+    @apply text-[11px] tracking-wide text-ink-light;
   }
 }
 
@@ -240,14 +242,14 @@ img {
   }
 }
 
-/* Mobile-first speed + thumb UX */
+/* Mobile-first speed + thumb UX — more breathing room */
 @layer components {
   .section-pad {
-    @apply py-7 sm:py-10 lg:py-12;
+    @apply py-8 sm:py-11 lg:py-14;
   }
 
   .section-subtitle {
-    @apply mt-1 max-w-xl text-sm leading-relaxed text-ink-muted;
+    @apply mt-1.5 max-w-xl text-sm leading-relaxed text-ink-muted;
   }
 
   .bottom-sheet {
@@ -255,7 +257,7 @@ img {
   }
 
   .sticky-cta-bar {
-    @apply fixed inset-x-0 bottom-0 z-40 border-t border-cream-200/80 bg-white/95 shadow-[0_-8px_30px_-12px_rgba(28,25,23,0.12)] backdrop-blur-md safe-bottom;
+    @apply fixed inset-x-0 bottom-0 z-40 border-t border-cream-200/50 bg-[#FFFCFA]/95 shadow-[0_-8px_30px_-14px_rgba(42,33,28,0.08)] backdrop-blur-md safe-bottom;
   }
 }
 
@@ -265,7 +267,7 @@ img {
     transition: none;
   }
   .card-soft:hover {
-    box-shadow: 0 2px 16px -2px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28, 25, 23, 0.04);
+    box-shadow: 0 4px 20px -4px rgba(42, 33, 28, 0.05), 0 1px 2px rgba(42, 33, 28, 0.03);
   }
   .group:hover .group-hover\:scale-105,
   .group:hover .group-hover\:scale-110 {

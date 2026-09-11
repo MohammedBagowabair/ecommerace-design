@@ -42,17 +42,17 @@ export function EmptyState({
 }) {
   const Icon = icons[icon];
   return (
-    <div className="flex flex-col items-center justify-center rounded-3xl border border-cream-200/60 bg-white px-6 py-16 text-center shadow-card sm:py-20">
-      <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-cream-100 to-blush/60 text-henna shadow-sm ring-1 ring-cream-200/80">
-        <Icon className="h-8 w-8" strokeWidth={1.4} />
+    <div className="flex flex-col items-center justify-center rounded-[1.75rem] bg-[#FFFCFA] px-6 py-18 text-center shadow-gallery sm:py-22">
+      <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-cream-100 text-henna">
+        <Icon className="h-7 w-7" strokeWidth={1.25} />
       </div>
-      <h2 className="text-xl font-bold tracking-tight text-ink">{title}</h2>
+      <h2 className="font-display text-xl font-semibold tracking-tight text-ink">{title}</h2>
       {description && (
-        <p className="mt-2.5 max-w-sm text-sm leading-relaxed text-ink-muted">
+        <p className="mt-3 max-w-sm text-sm leading-relaxed text-ink-muted">
           {description}
         </p>
       )}
-      <div className="mt-7 flex flex-wrap items-center justify-center gap-2.5">
+      <div className="mt-8 flex flex-wrap items-center justify-center gap-2.5">
         <Link href={actionHref} className="btn-primary min-w-[10rem]">
           {actionLabel}
         </Link>

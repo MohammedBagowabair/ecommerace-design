@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Plus, ShoppingBag } from "lucide-react";
+import { Heart, Plus } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { formatPriceShort, formatSarFromYer, getDiscountPercent, cn } from "@/lib/utils";
 import { useAdminOpsStore } from "@/lib/store/admin-ops";
@@ -54,16 +54,17 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="card-soft group relative flex flex-col overflow-hidden p-2 sm:p-3.5"
+      className="card-soft group relative flex flex-col overflow-hidden p-1.5 sm:p-2.5"
     >
-      <div className="relative aspect-square overflow-hidden rounded-2xl bg-cream-100 sm:rounded-[1.25rem]">
+      {/* Gallery image — majority of card */}
+      <div className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-cream-100 sm:aspect-square sm:rounded-2xl">
         <Image
           src={product.images[0]}
           alt={product.name}
           fill
           sizes="(max-width:360px) 46vw, (max-width:640px) 44vw, (max-width:1024px) 33vw, 25vw"
           className={cn(
-            "object-cover transition duration-500 motion-safe:group-hover:scale-105",
+            "object-cover transition duration-700 motion-safe:group-hover:scale-[1.03]",
             out && "opacity-60 grayscale"
           )}
         />
@@ -81,29 +82,30 @@ export function ProductCard({ product }: { product: Product }) {
           aria-label={wished ? "إزالة من المفضلة" : "إضافة للمفضلة"}
           onClick={onWish}
           className={cn(
-            "absolute end-1.5 top-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur transition duration-250 sm:end-2.5 sm:top-2.5 sm:h-11 sm:w-11 sm:hover:scale-105 sm:hover:shadow-md",
+            "absolute end-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-muted shadow-sm backdrop-blur-sm transition duration-250 sm:end-2.5 sm:top-2.5 sm:h-10 sm:w-10 sm:hover:text-henna",
             wished && "text-red-500"
           )}
         >
           <Heart
-            className={cn("h-[1.125rem] w-[1.125rem]", wished && "fill-current")}
-            strokeWidth={1.75}
+            className={cn("h-4 w-4", wished && "fill-current")}
+            strokeWidth={1.5}
           />
         </button>
         <StockOverlay status={product.stockStatus} stock={product.stock} />
       </div>
 
-      <div className="mt-2.5 flex flex-1 flex-col gap-1 px-0.5 sm:mt-3.5 sm:gap-1.5">
-        <h3 className="line-clamp-2 text-[13px] font-bold leading-snug text-ink sm:text-[0.9375rem]">
+      {/* Minimal chrome — name + price + quiet CTA */}
+      <div className="mt-2.5 flex flex-1 flex-col gap-0.5 px-1.5 pb-1 sm:mt-3 sm:gap-1 sm:px-1 sm:pb-1.5">
+        <h3 className="line-clamp-2 text-[13px] font-medium leading-snug text-ink sm:text-sm">
           {product.name}
         </h3>
-        <p className="meta-sm hidden tracking-wide sm:block">{product.sku}</p>
+        <p className="meta-sm hidden sm:block">{product.sku}</p>
         <div className="hidden sm:block">
           <StarRating rating={product.rating} reviewCount={product.reviewCount} showValue />
         </div>
-        <div className="mt-auto flex items-end justify-between gap-1.5 pt-2 sm:gap-2 sm:pt-3">
+        <div className="mt-auto flex items-end justify-between gap-1.5 pt-2 sm:gap-2 sm:pt-2.5">
           <div className="min-w-0">
-            <p className="text-sm font-bold tabular-nums leading-none text-henna sm:text-base">
+            <p className="text-sm font-semibold tabular-nums leading-none text-henna sm:text-[0.9375rem]">
               {formatPriceShort(product.price)}
             </p>
             {sarLabel && (
@@ -122,13 +124,9 @@ export function ProductCard({ product }: { product: Product }) {
             aria-label="أضيفي إلى السلة"
             onClick={onAdd}
             disabled={out}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink text-white shadow-sm transition duration-250 hover:bg-henna hover:shadow-md active:scale-95 disabled:opacity-40 sm:h-11 sm:w-11"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-henna text-cream-50 shadow-sm transition duration-250 hover:bg-henna-700 active:scale-95 disabled:opacity-40 sm:h-10 sm:w-10"
           >
-            <Plus className="h-5 w-5 sm:hidden" strokeWidth={2} />
-            <ShoppingBag
-              className="hidden h-[1.125rem] w-[1.125rem] sm:block"
-              strokeWidth={1.75}
-            />
+            <Plus className="h-4 w-4" strokeWidth={2} />
           </button>
         </div>
       </div>

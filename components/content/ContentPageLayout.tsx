@@ -14,29 +14,30 @@ export function ContentPageLayout({
   className?: string;
 }) {
   return (
-    <div className="container-pad overflow-x-clip py-6 sm:py-10">
+    <div className="container-pad overflow-x-clip py-8 sm:py-12">
       <div className="mx-auto max-w-2xl">
         <Link
           href="/"
-          className="mb-4 inline-flex items-center gap-1 text-sm font-semibold text-henna hover:underline"
+          className="mb-5 inline-flex items-center gap-1 text-sm font-medium text-henna transition hover:text-henna-700"
         >
-          <ChevronLeft className="h-4 w-4 rotate-180" />
+          <ChevronLeft className="h-4 w-4 rotate-180" strokeWidth={1.75} />
           الرئيسية
         </Link>
-        <header className="mb-6 sm:mb-8">
-          <h1 className="text-2xl font-bold tracking-tight text-ink sm:text-3xl">
+        <header className="mb-8 sm:mb-10">
+          <h1 className="font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-sm leading-relaxed text-ink-muted sm:text-base">
+            <p className="mt-3 text-sm leading-relaxed text-ink-muted sm:text-base">
               {subtitle}
             </p>
           )}
+          <div className="mt-5 h-px w-10 bg-gold-400/50" aria-hidden />
         </header>
         <article
           className={cn(
-            "rounded-3xl bg-white p-5 shadow-card sm:p-8",
-            "prose-naqshat space-y-4 text-[15px] leading-8 text-ink-muted",
+            "rounded-[1.75rem] bg-[#FFFCFA] p-6 shadow-gallery sm:p-9",
+            "prose-naqshat space-y-5 text-[15px] leading-8 text-ink-muted",
             className
           )}
         >
@@ -55,8 +56,8 @@ export function ContentSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-2">
-      <h2 className="text-base font-bold text-ink sm:text-lg">{title}</h2>
+    <section className="space-y-2.5">
+      <h2 className="font-display text-base font-semibold text-ink sm:text-lg">{title}</h2>
       <div className="space-y-2 text-ink-muted">{children}</div>
     </section>
   );
@@ -64,7 +65,7 @@ export function ContentSection({
 
 export function ContentList({ items }: { items: string[] }) {
   return (
-    <ul className="list-disc space-y-1.5 ps-5 marker:text-henna">
+    <ul className="list-disc space-y-1.5 ps-5 marker:text-gold-500">
       {items.map((item) => (
         <li key={item}>{item}</li>
       ))}
