@@ -229,7 +229,7 @@ export function ProductsBrowser({
               key={chip.key}
               type="button"
               onClick={chip.clear}
-              className="inline-flex items-center gap-1 rounded-full bg-henna-50 px-3 py-1 text-xs font-semibold text-henna"
+              className="inline-flex items-center gap-1 rounded-md bg-cream-100 px-2.5 py-1 text-xs font-semibold text-ink"
             >
               {chip.label}
               <X className="h-3 w-3" />
@@ -286,7 +286,7 @@ export function ProductsBrowser({
         >
           <button
             type="button"
-            className="absolute inset-0 bg-ink/40 motion-safe:animate-fadeIn"
+            className="absolute inset-0 bg-ink/50 motion-safe:animate-fadeIn"
             aria-label="إغلاق"
             onClick={() => setDrawer(false)}
           />

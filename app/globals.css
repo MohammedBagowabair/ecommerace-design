@@ -3,17 +3,18 @@
 @tailwind utilities;
 
 :root {
-  --background: #f5f3ef;
-  --foreground: #2a211c;
-  --henna: #4a3228;
-  --gold: #c5a059;
-  --blush: #efe6e0;
-  --muted: #6e655e;
-  --card: #fffcf9;
-  --radius: 1.5rem;
-  --radius-btn: 9999px;
+  --background: #ffffff;
+  --foreground: #111111;
+  --henna: #111111;
+  --gold: #c45c78;
+  --blush: #fdf2f5;
+  --muted: #6b6b6b;
+  --card: #ffffff;
+  --radius: 0.75rem;
+  --radius-btn: 0.375rem;
   --touch: 2.75rem; /* 44px */
-  --space-section: 2.75rem;
+  --space-section: 2.25rem;
+  --accent: #c45c78;
 }
 
 html {
@@ -30,9 +31,9 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Consistent focus rings for keyboard users — muted gold */
+/* Sharp commercial focus — rose accent */
 :focus-visible {
-  outline: 2px solid #c5a059;
+  outline: 2px solid #c45c78;
   outline-offset: 2px;
 }
 
@@ -43,81 +44,81 @@ a:focus:not(:focus-visible) {
 
 @layer components {
   .container-pad {
-    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-8;
   }
 
-  /* Luxury CTAs — refined solid primary, quiet secondary */
+  /* Sephora-like CTAs — near-black, sharper corners */
   .btn-primary {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-henna px-7 py-3 text-sm font-semibold tracking-wide text-cream-50 shadow-sm transition duration-250 hover:bg-henna-700 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md bg-henna px-6 py-3 text-sm font-semibold tracking-wide text-white shadow-none transition duration-200 hover:bg-henna-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-secondary {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-white/30 bg-white/10 px-7 py-3 text-sm font-medium tracking-wide text-white backdrop-blur-md transition duration-250 hover:bg-white/20 active:scale-[0.98];
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md border border-white/40 bg-white/10 px-6 py-3 text-sm font-semibold tracking-wide text-white backdrop-blur-sm transition duration-200 hover:bg-white/20 active:scale-[0.98];
   }
 
   .btn-outline {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-cream-300 bg-transparent px-5 py-2.5 text-sm font-medium tracking-wide text-henna-600 transition duration-250 hover:border-henna-300 hover:bg-cream-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md border border-cream-300 bg-transparent px-5 py-2.5 text-sm font-semibold tracking-wide text-ink transition duration-200 hover:border-ink hover:bg-cream-100 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-ghost {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium text-ink-muted transition duration-250 hover:bg-cream-100 hover:text-ink active:scale-[0.98];
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md px-4 py-2.5 text-sm font-medium text-ink-muted transition duration-200 hover:bg-cream-100 hover:text-ink active:scale-[0.98];
   }
 
   .btn-danger {
-    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-red-700/90 px-6 py-3 text-sm font-semibold text-white transition duration-250 hover:bg-red-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-md bg-red-600 px-6 py-3 text-sm font-semibold text-white transition duration-200 hover:bg-red-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-admin {
-    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl bg-henna px-4 py-2 text-sm font-semibold text-white transition duration-250 hover:bg-henna-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-lg bg-henna px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:bg-henna-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
   }
 
   .btn-admin-outline {
-    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl border border-cream-300 bg-white px-4 py-2 text-sm font-semibold text-ink transition duration-250 hover:border-henna-200 hover:bg-henna-50 active:scale-[0.98];
+    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-lg border border-cream-300 bg-white px-4 py-2 text-sm font-semibold text-ink transition duration-200 hover:border-ink hover:bg-cream-100 active:scale-[0.98];
   }
 
-  /* Gallery-like cards — soft shadow, no heavy borders */
+  /* Tight commercial cards — white, hairline border */
   .card-soft {
-    @apply rounded-3xl bg-[#FFFCFA] shadow-gallery transition duration-300 hover:shadow-card;
+    @apply rounded-lg border border-cream-200 bg-white transition duration-200 hover:border-cream-300 hover:shadow-card;
   }
 
   .card-panel {
-    @apply rounded-3xl border border-cream-200/60 bg-[#FFFCFA] shadow-card;
+    @apply rounded-xl border border-cream-200 bg-white shadow-card;
   }
 
   .section-title {
-    @apply font-display text-xl font-semibold leading-snug tracking-tight text-ink sm:text-2xl;
+    @apply font-display text-lg font-bold leading-snug tracking-tight text-ink sm:text-2xl;
   }
 
   .section-eyebrow {
-    @apply text-[11px] font-medium uppercase tracking-luxury-wide text-gold-600;
+    @apply text-[10px] font-semibold uppercase tracking-luxury-wide text-rose-500;
   }
 
   .input-pill {
-    @apply w-full rounded-full border border-cream-300/80 bg-cream-50/80 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
+    @apply w-full rounded-md border border-cream-300 bg-cream-100 px-4 py-2.5 text-sm text-ink outline-none transition duration-200 placeholder:text-ink-light focus:border-ink focus:bg-white focus:ring-1 focus:ring-ink/20;
   }
 
   .input-field {
-    @apply w-full rounded-2xl border border-cream-300/80 bg-cream-50/80 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
+    @apply w-full rounded-md border border-cream-300 bg-cream-100 px-4 py-2.5 text-sm text-ink outline-none transition duration-200 placeholder:text-ink-light focus:border-ink focus:bg-white focus:ring-1 focus:ring-ink/20;
   }
 
   .textarea-field {
-    @apply w-full resize-none rounded-2xl border border-cream-300/80 bg-cream-50/80 px-4 py-3 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-gold-100;
+    @apply w-full resize-none rounded-md border border-cream-300 bg-cream-100 px-4 py-3 text-sm text-ink outline-none transition duration-200 placeholder:text-ink-light focus:border-ink focus:bg-white focus:ring-1 focus:ring-ink/20;
   }
 
   .badge-pill {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold;
+    @apply inline-flex items-center rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide;
   }
 
   .chip {
-    @apply inline-flex min-h-[2.5rem] items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-medium transition duration-250;
+    @apply inline-flex min-h-[2.25rem] items-center justify-center rounded-md px-3 py-1.5 text-xs font-semibold transition duration-200;
   }
 
   .chip-idle {
-    @apply chip bg-cream-100 text-ink-muted hover:bg-cream-200 hover:text-ink;
+    @apply chip border border-cream-200 bg-white text-ink-muted hover:border-ink hover:text-ink;
   }
 
   .chip-active {
-    @apply chip bg-henna text-cream-50 shadow-sm;
+    @apply chip border border-ink bg-ink text-white;
   }
 
   .touch-target {
@@ -129,7 +130,7 @@ a:focus:not(:focus-visible) {
   }
 
   .page-title {
-    @apply font-display text-2xl font-semibold tracking-tight text-ink sm:text-3xl;
+    @apply font-display text-xl font-bold tracking-tight text-ink sm:text-3xl;
   }
 
   .page-subtitle {
@@ -145,15 +146,15 @@ a:focus:not(:focus-visible) {
   }
 
   .trust-row {
-    @apply flex items-start gap-3 rounded-2xl bg-cream-50/90 px-3.5 py-3 text-sm;
+    @apply flex items-start gap-3 rounded-lg border border-cream-200 bg-cream-100/60 px-3.5 py-3 text-sm;
   }
 
   .admin-card {
-    @apply rounded-2xl border border-cream-200/80 bg-white p-4 shadow-card sm:p-5;
+    @apply rounded-xl border border-cream-200 bg-white p-4 shadow-card sm:p-5;
   }
 
   .admin-table-wrap {
-    @apply overflow-hidden rounded-2xl border border-cream-200/80 bg-white shadow-card;
+    @apply overflow-hidden rounded-xl border border-cream-200 bg-white shadow-card;
   }
 
   .admin-table {
@@ -161,7 +162,7 @@ a:focus:not(:focus-visible) {
   }
 
   .admin-table thead tr {
-    @apply border-b border-cream-200 bg-cream-50/80 text-start text-xs text-ink-muted;
+    @apply border-b border-cream-200 bg-cream-100 text-start text-xs text-ink-muted;
   }
 
   .admin-table th {
@@ -173,15 +174,15 @@ a:focus:not(:focus-visible) {
   }
 
   .admin-table tbody tr {
-    @apply border-b border-cream-100 transition hover:bg-cream-50/60 last:border-0;
+    @apply border-b border-cream-100 transition hover:bg-cream-100/80 last:border-0;
   }
 
   .price-lg {
-    @apply text-lg font-semibold tabular-nums text-henna sm:text-xl;
+    @apply text-lg font-bold tabular-nums text-ink sm:text-xl;
   }
 
   .price-md {
-    @apply text-base font-semibold tabular-nums text-henna;
+    @apply text-base font-bold tabular-nums text-ink;
   }
 
   .meta-sm {
@@ -242,22 +243,22 @@ img {
   }
 }
 
-/* Mobile-first speed + thumb UX — more breathing room */
+/* Mobile-first commercial spacing */
 @layer components {
   .section-pad {
-    @apply py-8 sm:py-11 lg:py-14;
+    @apply py-6 sm:py-10 lg:py-12;
   }
 
   .section-subtitle {
-    @apply mt-1.5 max-w-xl text-sm leading-relaxed text-ink-muted;
+    @apply mt-1 max-w-xl text-sm leading-relaxed text-ink-muted;
   }
 
   .bottom-sheet {
-    @apply absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[1.75rem] bg-cream shadow-float;
+    @apply absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-2xl bg-white shadow-float;
   }
 
   .sticky-cta-bar {
-    @apply fixed inset-x-0 bottom-0 z-40 border-t border-cream-200/50 bg-[#FFFCFA]/95 shadow-[0_-8px_30px_-14px_rgba(42,33,28,0.08)] backdrop-blur-md safe-bottom;
+    @apply fixed inset-x-0 bottom-0 z-40 border-t border-cream-200 bg-white/95 shadow-[0_-4px_20px_-8px_rgba(0,0,0,0.1)] backdrop-blur-md safe-bottom;
   }
 }
 
@@ -267,7 +268,7 @@ img {
     transition: none;
   }
   .card-soft:hover {
-    box-shadow: 0 4px 20px -4px rgba(42, 33, 28, 0.05), 0 1px 2px rgba(42, 33, 28, 0.03);
+    box-shadow: none;
   }
   .group:hover .group-hover\:scale-105,
   .group:hover .group-hover\:scale-110 {
@@ -278,11 +279,11 @@ img {
 /* Extra-narrow phones (≈320) */
 @media (max-width: 360px) {
   .container-pad {
-    padding-left: 0.75rem;
-    padding-right: 0.75rem;
+    padding-left: 0.625rem;
+    padding-right: 0.625rem;
   }
   .page-title {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
   }
 }

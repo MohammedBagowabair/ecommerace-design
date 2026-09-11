@@ -160,7 +160,7 @@ export function ProductDetail({
         <div className="grid gap-8 lg:grid-cols-2 lg:gap-12">
           {/* Gallery */}
           <div>
-            <div className="relative aspect-square overflow-hidden rounded-[1.75rem] bg-cream-100 shadow-gallery sm:rounded-[2rem]">
+            <div className="relative aspect-square overflow-hidden rounded-xl bg-cream-100 sm:rounded-2xl">
               <SafeMedia
                 src={gallery[img] ?? product.images[0]}
                 alt={product.name}
@@ -186,7 +186,7 @@ export function ProductDetail({
                   type="button"
                   onClick={onShare}
                   aria-label="مشاركة"
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur transition hover:shadow-md"
+                  className="flex h-10 w-10 items-center justify-center rounded-md bg-white/95 shadow-sm backdrop-blur transition hover:bg-white"
                 >
                   <Share2 className="h-4 w-4" strokeWidth={1.75} />
                 </button>
@@ -195,7 +195,7 @@ export function ProductDetail({
                   onClick={onWish}
                   aria-label="مفضلة"
                   className={cn(
-                    "flex h-11 w-11 items-center justify-center rounded-full bg-white/95 shadow-sm backdrop-blur transition hover:shadow-md",
+                    "flex h-10 w-10 items-center justify-center rounded-md bg-white/95 shadow-sm backdrop-blur transition hover:bg-white",
                     wished && "text-red-500"
                   )}
                 >
@@ -224,8 +224,8 @@ export function ProductDetail({
                   type="button"
                   onClick={() => setImg(i)}
                   className={cn(
-                    "relative h-[4.5rem] w-[4.5rem] shrink-0 overflow-hidden rounded-2xl border transition duration-250",
-                    i === img ? "border-henna/40 shadow-sm" : "border-transparent opacity-75 hover:opacity-100"
+                    "relative h-[4.25rem] w-[4.25rem] shrink-0 overflow-hidden rounded-lg border transition duration-200",
+                    i === img ? "border-ink shadow-sm" : "border-cream-200 opacity-70 hover:opacity-100"
                   )}
                 >
                   <SafeMedia src={src} alt="" fill className="object-cover" sizes="72px" muted />
@@ -272,7 +272,7 @@ export function ProductDetail({
             <p className="mt-6 text-sm leading-relaxed text-ink-muted sm:text-[15px] sm:leading-7">{product.description}</p>
 
             {product.info && (
-              <dl className="mt-6 grid gap-3 rounded-3xl bg-cream-50/80 p-4 text-sm sm:grid-cols-2 sm:p-5">
+              <dl className="mt-6 grid gap-3 rounded-lg border border-cream-200 bg-cream-100/80 p-4 text-sm sm:grid-cols-2 sm:p-5">
                 {Object.entries(product.info).map(([k, v]) => (
                   <div key={k}>
                     <dt className="text-xs text-ink-light">{k}</dt>
@@ -285,7 +285,7 @@ export function ProductDetail({
             {/* Trust cues */}
             <div className="mt-6 space-y-2.5">
               <div className="trust-row">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-henna shadow-sm">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white text-ink shadow-sm">
                   <Truck className="h-4 w-4" strokeWidth={1.75} />
                 </span>
                 <div>
@@ -299,7 +299,7 @@ export function ProductDetail({
                 </div>
               </div>
               <div className="trust-row">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-henna shadow-sm">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-white text-ink shadow-sm">
                   <Building2 className="h-4 w-4" strokeWidth={1.75} />
                 </span>
                 <div>
@@ -310,7 +310,7 @@ export function ProductDetail({
             </div>
 
             {/* Desktop purchase block */}
-            <div className="mt-8 hidden rounded-3xl border border-cream-200/60 bg-[#FFFCFA] p-5 shadow-gallery lg:block">
+            <div className="mt-8 hidden rounded-xl border border-cream-200 bg-white p-5 shadow-card lg:block">
               <div className="flex flex-wrap items-center gap-3">
                 <QuantitySelector
                   value={qty}
@@ -378,9 +378,9 @@ export function ProductDetail({
 
       {/* Sticky mobile CTA — thumb-reachable */}
       <div className="sticky-cta-bar lg:hidden">
-        <div className="mx-auto flex max-w-lg items-center gap-2 px-3 py-2.5">
+        <div className="mx-auto flex max-w-lg items-center gap-2 px-3 py-2">
           <div className="min-w-0 shrink">
-            <p className="price-md text-base leading-tight">{formatPriceShort(lineTotal)}</p>
+            <p className="price-md text-[15px] leading-tight">{formatPriceShort(lineTotal)}</p>
             {qty > 1 && (
               <p className="text-[10px] text-ink-light">{qty} قطع</p>
             )}
@@ -396,9 +396,9 @@ export function ProductDetail({
             type="button"
             onClick={onAdd}
             disabled={out}
-            className="btn-primary min-h-12 min-w-0 flex-1 gap-1.5 px-3 text-sm"
+            className="btn-primary min-h-11 min-w-0 flex-1 gap-1.5 rounded-md px-3 text-sm"
           >
-            <ShoppingBag className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+            <ShoppingBag className="h-4 w-4 shrink-0" strokeWidth={2} />
             <span className="truncate">{out ? "نفدت" : "أضيفي للسلة"}</span>
           </button>
         </div>

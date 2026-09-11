@@ -36,32 +36,32 @@ const occasions = [
 
 export function OccasionStrip() {
   return (
-    <section className="container-pad py-6 sm:py-9">
-      <div className="mb-4 flex items-end justify-between gap-3 sm:mb-5">
+    <section className="container-pad py-5 sm:py-8">
+      <div className="mb-3.5 flex items-end justify-between gap-3 sm:mb-5">
         <div>
           <p className="section-eyebrow hidden sm:block">للمناسبات</p>
           <h2 className="section-title mt-0 sm:mt-1">نقشات تليق بلحظتكِ</h2>
         </div>
         <Link
           href="/categories/al-munasabat"
-          className="min-h-10 inline-flex items-center text-xs font-medium text-henna transition hover:text-henna-700 sm:text-sm"
+          className="min-h-9 inline-flex items-center text-xs font-semibold text-ink transition hover:text-rose-600 sm:text-sm"
         >
           المزيد
         </Link>
       </div>
-      <div className="hide-scrollbar -mx-4 flex gap-2.5 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-3 sm:overflow-visible sm:px-0 lg:grid-cols-6">
+      <div className="hide-scrollbar -mx-3 flex gap-2 overflow-x-auto px-3 pb-1 sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-2.5 sm:overflow-visible sm:px-0 lg:grid-cols-6">
         {occasions.map((o) => {
           const Icon = o.icon;
           return (
             <Link
               key={o.label}
               href={o.href}
-              className="group flex min-w-[6.75rem] flex-col items-center gap-2.5 rounded-2xl bg-[#FFFCFA] p-3.5 shadow-gallery transition sm:min-w-0 sm:gap-3 sm:rounded-3xl sm:p-5 sm:hover:shadow-card"
+              className="group flex min-w-[6.25rem] flex-col items-center gap-2 rounded-lg border border-cream-200 bg-white p-3 transition hover:border-ink sm:min-w-0 sm:gap-2.5 sm:p-4"
             >
-              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-cream-100 text-henna transition group-hover:bg-henna group-hover:text-cream-50 sm:h-12 sm:w-12">
+              <span className="flex h-10 w-10 items-center justify-center rounded-md bg-cream-100 text-ink transition group-hover:bg-ink group-hover:text-white sm:h-11 sm:w-11">
                 <Icon className="h-5 w-5" strokeWidth={1.5} />
               </span>
-              <span className="text-center text-xs font-medium text-ink sm:text-sm">
+              <span className="text-center text-xs font-semibold text-ink sm:text-sm">
                 {o.label}
               </span>
             </Link>

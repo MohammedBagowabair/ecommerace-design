@@ -78,8 +78,8 @@ export function ProductFiltersPanel({
   return (
     <aside
       className={cn(
-        "space-y-5 rounded-3xl border border-cream-200/60 bg-white p-4 shadow-card sm:space-y-6 sm:p-6",
-        compact && "space-y-4 rounded-2xl border-0 bg-transparent p-1 shadow-none sm:p-1",
+        "space-y-5 rounded-xl border border-cream-200 bg-white p-4 shadow-card sm:space-y-5 sm:p-5",
+        compact && "space-y-4 rounded-lg border-0 bg-transparent p-1 shadow-none sm:p-1",
         className
       )}
     >
@@ -97,7 +97,7 @@ export function ProductFiltersPanel({
             type="button"
             onClick={onClose}
             aria-label="إغلاق"
-            className="flex h-11 w-11 items-center justify-center rounded-full hover:bg-cream-100"
+            className="flex h-10 w-10 items-center justify-center rounded-md hover:bg-cream-100"
           >
             <X className="h-5 w-5" />
           </button>
@@ -127,7 +127,7 @@ export function ProductFiltersPanel({
           {getParentCategories(categories).map((c) => (
             <label
               key={c.id}
-              className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 text-sm text-ink-muted transition hover:bg-cream-50"
+              className="flex min-h-10 cursor-pointer items-center gap-3 rounded-md px-2 text-sm text-ink-muted transition hover:bg-cream-100"
             >
               <input
                 type="checkbox"
@@ -251,7 +251,7 @@ export function ProductFiltersPanel({
 
       <FilterSection title="التوفر والخصم" compact={compact}>
         <div className="space-y-1">
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 text-sm text-ink-muted transition hover:bg-cream-50">
+          <label className="flex min-h-10 cursor-pointer items-center gap-3 rounded-md px-2 text-sm text-ink-muted transition hover:bg-cream-100">
             <input
               type="checkbox"
               checked={filters.inStockOnly}
@@ -262,7 +262,7 @@ export function ProductFiltersPanel({
             />
             <span className="font-medium">المتوفر فقط</span>
           </label>
-          <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 text-sm text-ink-muted transition hover:bg-cream-50">
+          <label className="flex min-h-10 cursor-pointer items-center gap-3 rounded-md px-2 text-sm text-ink-muted transition hover:bg-cream-100">
             <input
               type="checkbox"
               checked={filters.onSaleOnly}

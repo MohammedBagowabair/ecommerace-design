@@ -54,21 +54,21 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/products/${product.slug}`}
-      className="card-soft group relative flex flex-col overflow-hidden p-1.5 sm:p-2.5"
+      className="card-soft group relative flex flex-col overflow-hidden"
     >
-      {/* Gallery image — majority of card */}
-      <div className="relative aspect-[4/5] overflow-hidden rounded-[1.25rem] bg-cream-100 sm:aspect-square sm:rounded-2xl">
+      {/* Shein-dense product photo frame */}
+      <div className="relative aspect-[3/4] overflow-hidden bg-cream-100">
         <Image
           src={product.images[0]}
           alt={product.name}
           fill
-          sizes="(max-width:360px) 46vw, (max-width:640px) 44vw, (max-width:1024px) 33vw, 25vw"
+          sizes="(max-width:360px) 48vw, (max-width:640px) 46vw, (max-width:1024px) 33vw, 25vw"
           className={cn(
-            "object-cover transition duration-700 motion-safe:group-hover:scale-[1.03]",
-            out && "opacity-60 grayscale"
+            "object-cover transition duration-500 motion-safe:group-hover:scale-[1.04]",
+            out && "opacity-55 grayscale"
           )}
         />
-        <div className="absolute start-2 top-2 flex flex-col gap-1 sm:start-2.5 sm:top-2.5 sm:gap-1.5">
+        <div className="absolute start-1.5 top-1.5 flex flex-col gap-1 sm:start-2 sm:top-2">
           {discount && <DiscountBadge percent={discount} />}
           {product.badges
             .filter((b) => b !== "discount")
@@ -82,30 +82,29 @@ export function ProductCard({ product }: { product: Product }) {
           aria-label={wished ? "إزالة من المفضلة" : "إضافة للمفضلة"}
           onClick={onWish}
           className={cn(
-            "absolute end-1.5 top-1.5 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-ink-muted shadow-sm backdrop-blur-sm transition duration-250 sm:end-2.5 sm:top-2.5 sm:h-10 sm:w-10 sm:hover:text-henna",
-            wished && "text-red-500"
+            "absolute end-1.5 top-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-ink-muted shadow-sm transition duration-200 sm:end-2 sm:top-2 sm:h-9 sm:w-9 sm:hover:text-rose-500",
+            wished && "text-rose-500"
           )}
         >
           <Heart
-            className={cn("h-4 w-4", wished && "fill-current")}
-            strokeWidth={1.5}
+            className={cn("h-3.5 w-3.5 sm:h-4 sm:w-4", wished && "fill-current")}
+            strokeWidth={1.75}
           />
         </button>
         <StockOverlay status={product.stockStatus} stock={product.stock} />
       </div>
 
-      {/* Minimal chrome — name + price + quiet CTA */}
-      <div className="mt-2.5 flex flex-1 flex-col gap-0.5 px-1.5 pb-1 sm:mt-3 sm:gap-1 sm:px-1 sm:pb-1.5">
-        <h3 className="line-clamp-2 text-[13px] font-medium leading-snug text-ink sm:text-sm">
+      {/* Dense info — price prominent, quick add */}
+      <div className="flex flex-1 flex-col gap-0.5 p-2 sm:gap-1 sm:p-2.5">
+        <h3 className="line-clamp-2 min-h-[2.25rem] text-[12px] font-medium leading-snug text-ink sm:min-h-0 sm:text-[13px]">
           {product.name}
         </h3>
-        <p className="meta-sm hidden sm:block">{product.sku}</p>
         <div className="hidden sm:block">
           <StarRating rating={product.rating} reviewCount={product.reviewCount} showValue />
         </div>
-        <div className="mt-auto flex items-end justify-between gap-1.5 pt-2 sm:gap-2 sm:pt-2.5">
+        <div className="mt-auto flex items-end justify-between gap-1.5 pt-1.5">
           <div className="min-w-0">
-            <p className="text-sm font-semibold tabular-nums leading-none text-henna sm:text-[0.9375rem]">
+            <p className="text-[13px] font-bold tabular-nums leading-none text-ink sm:text-sm">
               {formatPriceShort(product.price)}
             </p>
             {sarLabel && (
@@ -114,7 +113,7 @@ export function ProductCard({ product }: { product: Product }) {
               </p>
             )}
             {product.compareAtPrice && (
-              <p className="mt-0.5 text-[10px] text-ink-light line-through sm:mt-1 sm:text-[11px]">
+              <p className="mt-0.5 text-[10px] text-ink-light line-through">
                 {formatPriceShort(product.compareAtPrice)}
               </p>
             )}
@@ -124,9 +123,9 @@ export function ProductCard({ product }: { product: Product }) {
             aria-label="أضيفي إلى السلة"
             onClick={onAdd}
             disabled={out}
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-henna text-cream-50 shadow-sm transition duration-250 hover:bg-henna-700 active:scale-95 disabled:opacity-40 sm:h-10 sm:w-10"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-ink text-white transition duration-200 hover:bg-henna-700 active:scale-95 disabled:opacity-40 sm:h-9 sm:w-9"
           >
-            <Plus className="h-4 w-4" strokeWidth={2} />
+            <Plus className="h-4 w-4" strokeWidth={2.25} />
           </button>
         </div>
       </div>

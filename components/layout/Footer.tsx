@@ -37,27 +37,27 @@ export function Footer() {
   const parents = getParentCategories().slice(0, 5);
 
   return (
-    <footer className="mt-14 border-t border-cream-200/60 bg-henna-900 text-cream-100 sm:mt-24">
-      <div className="container-pad grid gap-10 py-12 sm:grid-cols-2 sm:gap-12 sm:py-16 lg:grid-cols-4">
+    <footer className="mt-10 border-t border-ink bg-ink text-white sm:mt-16">
+      <div className="container-pad grid gap-8 py-10 sm:grid-cols-2 sm:gap-10 sm:py-14 lg:grid-cols-4">
         <div>
-          <Link href="/" className="font-display text-2xl font-semibold tracking-tight text-cream-50">
+          <Link href="/" className="font-display text-xl font-bold tracking-tight text-white">
             {storeName}
           </Link>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-cream-200/70">
-            {brand.tagline}. متجر نسائي فاخر لاستكيرات نقشات الحناء — تصاميم عصرية
+          <p className="mt-3 max-w-xs text-sm leading-relaxed text-white/60">
+            {brand.tagline}. متجر نسائي لاستكيرات نقشات الحناء — تصاميم عصرية
             للمناسبات والأعراس والإطلالات اليومية.
           </p>
-          <div className="mt-5 h-px w-12 bg-gold-400/60" aria-hidden />
+          <div className="mt-4 h-0.5 w-10 bg-rose-500" aria-hidden />
         </div>
 
         <div>
-          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+          <h3 className="mb-3 text-[10px] font-bold uppercase tracking-luxury-wide text-rose-400">
             روابط سريعة
           </h3>
-          <ul className="space-y-2.5 text-sm text-cream-200/75">
+          <ul className="space-y-2 text-sm text-white/65">
             {navLinks.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="transition hover:text-cream-50">
+                <Link href={l.href} className="transition hover:text-white">
                   {l.label}
                 </Link>
               </li>
@@ -66,28 +66,28 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+          <h3 className="mb-3 text-[10px] font-bold uppercase tracking-luxury-wide text-rose-400">
             الأقسام
           </h3>
-          <ul className="space-y-2.5 text-sm text-cream-200/75">
+          <ul className="space-y-2 text-sm text-white/65">
             {parents.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/categories/${c.slug}`}
-                  className="transition hover:text-cream-50"
+                  className="transition hover:text-white"
                 >
                   {c.name}
                 </Link>
               </li>
             ))}
           </ul>
-          <h3 className="mb-4 mt-8 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+          <h3 className="mb-3 mt-7 text-[10px] font-bold uppercase tracking-luxury-wide text-rose-400">
             معلومات المتجر
           </h3>
-          <ul className="space-y-2.5 text-sm text-cream-200/75">
+          <ul className="space-y-2 text-sm text-white/65">
             {infoLinks.map((l) => (
               <li key={l.href}>
-                <Link href={l.href} className="transition hover:text-cream-50">
+                <Link href={l.href} className="transition hover:text-white">
                   {l.label}
                 </Link>
               </li>
@@ -96,10 +96,10 @@ export function Footer() {
         </div>
 
         <div>
-          <h3 className="mb-4 text-[11px] font-medium uppercase tracking-luxury-wide text-gold-400">
+          <h3 className="mb-3 text-[10px] font-bold uppercase tracking-luxury-wide text-rose-400">
             تواصل
           </h3>
-          <ul className="space-y-2.5 text-sm text-cream-200/75">
+          <ul className="space-y-2 text-sm text-white/65">
             <li>الدفع: تحويل بنكي</li>
             <li>
               {delivery.deliveryLabel}: {delivery.deliveryEta}
@@ -110,23 +110,23 @@ export function Footer() {
                 href={`https://wa.me/${whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium text-gold-300 transition hover:text-gold-200"
+                className="font-semibold text-rose-300 transition hover:text-rose-200"
               >
                 واتساب {whatsappDisplay}
               </a>
             </li>
             <li>
-              <Link href="/contact" className="font-medium text-gold-300 transition hover:text-gold-200">
+              <Link href="/contact" className="font-semibold text-rose-300 transition hover:text-rose-200">
                 نموذج تواصل معنا
               </Link>
             </li>
-            <li className="pt-2 text-xs text-cream-200/50">
+            <li className="pt-2 text-xs text-white/40">
               الأسعار بـ {brand.currency}
             </li>
           </ul>
         </div>
       </div>
-      <div className="border-t border-white/5 py-5 text-center text-[11px] tracking-wide text-cream-200/45">
+      <div className="border-t border-white/10 py-4 text-center text-[11px] tracking-wide text-white/40">
         © {new Date().getFullYear()} {storeName}. جميع الحقوق محفوظة.
       </div>
     </footer>

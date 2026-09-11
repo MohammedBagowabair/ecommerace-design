@@ -10,10 +10,10 @@ const labels: Record<ProductBadge, string> = {
 };
 
 const styles: Record<ProductBadge, string> = {
-  new: "bg-henna text-white",
-  featured: "bg-gold text-white",
+  new: "bg-ink text-white",
+  featured: "bg-rose-500 text-white",
   bestseller: "bg-ink text-white",
-  discount: "bg-red-600 text-white shadow-sm ring-1 ring-red-700/20",
+  discount: "bg-rose-600 text-white",
   limited: "bg-henna-700 text-white",
 };
 
@@ -49,11 +49,11 @@ export function DiscountBadge({
       type="discount"
       className={cn(
         "font-bold tracking-tight",
-        size === "md" && "px-3 py-1 text-xs",
+        size === "md" && "px-2.5 py-1 text-xs",
         className
       )}
     >
-      خصم {percent}%
+      -{percent}%
     </Badge>
   );
 }

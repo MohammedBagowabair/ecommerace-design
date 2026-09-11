@@ -33,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl" className={`${cairo.variable} ${display.variable}`}>
-      <body className="flex min-h-screen flex-col overflow-x-clip bg-cream font-arabic text-ink antialiased">
+      <body className="flex min-h-screen flex-col overflow-x-clip bg-white font-arabic text-ink antialiased">
         <Providers>
           <StorefrontChrome>{children}</StorefrontChrome>
         </Providers>
