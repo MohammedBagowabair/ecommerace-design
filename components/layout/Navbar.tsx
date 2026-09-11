@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -67,6 +68,7 @@ export function Navbar() {
   }, [openSearch]);
 
   return (
+    <>
     <header className="sticky top-0 z-50 border-b border-cream-200/70 bg-white/90 backdrop-blur-md">
       <div className="container-pad">
         {/* Desktop */}
@@ -149,10 +151,13 @@ export function Navbar() {
         </div>
       </div>
 
-      {/* Mobile side drawer — from RTL start edge (right) */}
-      <div
+    </header>
+
+      {mounted &&
+        createPortal(
+          <div
         className={cn(
-          "fixed inset-0 z-[70] lg:hidden",
+          "fixed inset-0 z-[100] lg:hidden",
           open ? "pointer-events-auto" : "pointer-events-none"
         )}
         aria-hidden={!open}
@@ -169,9 +174,7 @@ export function Navbar() {
         <aside
           className={cn(
             "absolute inset-y-0 start-0 flex w-[min(20rem,88vw)] flex-col bg-white shadow-xl transition-transform duration-300 ease-out",
-            open
-              ? "translate-x-0"
-              : "ltr:-translate-x-full rtl:translate-x-full"
+            open ? "translate-x-0" : "translate-x-full"
           )}
           role="dialog"
           aria-modal="true"
@@ -264,10 +267,13 @@ export function Navbar() {
             </Link>
           </nav>
         </aside>
-      </div>
-    </header>
+      </div>,
+          document.body
+        )}
+    </>
   );
 }
+
 
 function CartIconButton({
   count,
