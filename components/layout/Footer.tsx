@@ -27,8 +27,8 @@ export function Footer() {
   const parents = getParentCategories().slice(0, 5);
 
   return (
-    <footer className="mt-20 border-t border-cream-200 bg-white">
-      <div className="container-pad grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
+    <footer className="mt-12 border-t border-cream-200 bg-white sm:mt-20">
+      <div className="container-pad grid gap-8 py-10 sm:grid-cols-2 sm:gap-10 sm:py-14 lg:grid-cols-4">
         <div>
           <Link href="/" className="text-2xl font-bold text-henna">
             {storeName}

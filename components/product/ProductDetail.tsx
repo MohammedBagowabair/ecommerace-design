@@ -127,8 +127,8 @@ export function ProductDetail({
 
   return (
     <div>
-      <div className="container-pad py-4 text-sm text-ink-muted">
-        <nav className="flex flex-wrap items-center gap-1" aria-label="مسار التنقل">
+      <div className="container-pad py-3 text-sm text-ink-muted sm:py-4">
+        <nav className="hidden flex-wrap items-center gap-1 sm:flex" aria-label="مسار التنقل">
           <Link href="/" className="transition hover:text-henna">
             الرئيسية
           </Link>
@@ -147,6 +147,13 @@ export function ProductDetail({
           <ChevronRight className="h-3.5 w-3.5 rotate-180 opacity-50" />
           <span className="text-ink line-clamp-1">{product.name}</span>
         </nav>
+        <Link
+          href="/products"
+          className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-henna sm:hidden"
+        >
+          <ChevronRight className="h-4 w-4 rotate-180" />
+          النقشات
+        </Link>
       </div>
 
       <div className="container-pad pb-28 lg:pb-12">
@@ -369,27 +376,30 @@ export function ProductDetail({
       />
       <RecentlyViewed excludeId={product.id} />
 
-      {/* Sticky mobile CTA */}
-      <div className="fixed inset-x-0 bottom-0 z-40 border-t border-cream-200/80 bg-white/95 safe-bottom shadow-[0_-8px_30px_-12px_rgba(28,25,23,0.12)] backdrop-blur-md lg:hidden">
-        <div className="mx-auto flex max-w-lg items-center gap-2.5 px-3 py-2.5">
+      {/* Sticky mobile CTA — thumb-reachable */}
+      <div className="sticky-cta-bar lg:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-2 px-3 py-2.5">
           <div className="min-w-0 shrink">
-            <p className="truncate text-[11px] text-ink-light">{product.name}</p>
             <p className="price-md text-base leading-tight">{formatPriceShort(lineTotal)}</p>
+            {qty > 1 && (
+              <p className="text-[10px] text-ink-light">{qty} قطع</p>
+            )}
           </div>
           <QuantitySelector
             value={qty}
             onChange={setQty}
             max={Math.max(1, product.stock || 1)}
+            size="sm"
             className="shrink-0"
           />
           <button
             type="button"
             onClick={onAdd}
             disabled={out}
-            className="btn-primary min-w-0 flex-1 gap-1.5 px-4 py-3 text-[13px]"
+            className="btn-primary min-h-12 min-w-0 flex-1 gap-1.5 px-3 text-sm"
           >
             <ShoppingBag className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-            <span className="truncate">{out ? "نفدت" : "أضيفي"}</span>
+            <span className="truncate">{out ? "نفدت" : "أضيفي للسلة"}</span>
           </button>
         </div>
       </div>

@@ -47,12 +47,12 @@ export default function HomePage() {
         href="/products"
       />
 
-      <section className="container-pad py-10 sm:py-12">
-        <div className="mb-6">
+      <section className="container-pad py-7 sm:py-10 lg:py-12">
+        <div className="mb-4 sm:mb-6">
           <p className="section-eyebrow">لفترة محدودة</p>
           <h2 className="section-title mt-1">عروض تليق بمناسبتكِ</h2>
         </div>
-        <div className="grid gap-5 lg:grid-cols-2">
+        <div className="grid gap-3 sm:gap-5 lg:grid-cols-2">
           {spotlightOffers.map((o) => (
             <OfferBanner key={o.id} offer={o} />
           ))}

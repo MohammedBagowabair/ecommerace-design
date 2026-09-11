@@ -25,7 +25,7 @@ export function AdminTopbar({
     <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-cream-300 bg-white/95 px-3 backdrop-blur sm:gap-3 sm:px-5">
       <button
         type="button"
-        className="rounded-xl p-2 text-ink hover:bg-cream-100 lg:hidden"
+        className="flex h-11 w-11 items-center justify-center rounded-xl text-ink hover:bg-cream-100 lg:hidden"
         onClick={onMenu}
         aria-label="فتح القائمة"
       >

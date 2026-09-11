@@ -78,7 +78,7 @@ export function CartLineItem({
           <button
             type="button"
             aria-label="حذف من السلة"
-            className="shrink-0 rounded-full p-2 text-ink-light transition hover:bg-red-50 hover:text-red-600"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-ink-light transition hover:bg-red-50 hover:text-red-600"
             onClick={onRemove}
           >
             <Trash2 className="h-4 w-4" />
@@ -100,6 +100,7 @@ export function CartLineItem({
               onChange={onQuantityChange}
               max={max}
               min={1}
+              size={compact ? "sm" : "md"}
             />
           )}
           <div className="text-start">

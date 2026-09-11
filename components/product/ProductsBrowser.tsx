@@ -5,7 +5,6 @@ import { ArrowUpDown, Filter, X } from "lucide-react";
 import { filterAndSortProducts, sortOptions } from "@/lib/catalog";
 import { categories as seedCategories } from "@/lib/data";
 import type { SortOption } from "@/lib/types";
-import { cn } from "@/lib/utils";
 import { useAdminOpsStore } from "@/lib/store/admin-ops";
 import { mergeCategories, mergeProducts } from "@/lib/admin/merged-catalog";
 import { ProductGrid } from "./ProductGrid";
@@ -209,11 +208,16 @@ export function ProductsBrowser({
           </label>
           <button
             type="button"
-            className="btn-outline lg:hidden"
+            className="btn-outline min-h-11 gap-2 px-4 lg:hidden"
             onClick={() => setDrawer(true)}
           >
             <Filter className="h-4 w-4" />
-            تصفية وترتيب
+            تصفية
+            {activeChips.length > 0 && (
+              <span className="rounded-full bg-henna px-1.5 py-0.5 text-[10px] font-bold text-white">
+                {activeChips.length}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -274,31 +278,55 @@ export function ProductsBrowser({
       </div>
 
       {drawer && (
-        <div className="fixed inset-0 z-[60] lg:hidden" role="dialog" aria-modal="true" aria-label="تصفية وترتيب">
+        <div
+          className="fixed inset-0 z-[60] lg:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="تصفية"
+        >
           <button
             type="button"
-            className="absolute inset-0 bg-ink/40 animate-fadeIn"
+            className="absolute inset-0 bg-ink/40 motion-safe:animate-fadeIn"
             aria-label="إغلاق"
             onClick={() => setDrawer(false)}
           />
-          <div
-            className={cn(
-              "absolute inset-y-0 start-0 flex w-[min(100%,22rem)] flex-col overflow-y-auto bg-cream p-4 shadow-float animate-slideInStart"
-            )}
-          >
-            <ProductFiltersPanel
-              filters={filters}
-              onChange={setFilters}
-              onClose={() => setDrawer(false)}
-              showSort
-            />
-            <button
-              type="button"
-              className="btn-primary mt-4 w-full shrink-0"
-              onClick={() => setDrawer(false)}
-            >
-              عرض {filtered.length} نتيجة
-            </button>
+          <div className="bottom-sheet motion-safe:animate-slideUp">
+            <div className="flex shrink-0 justify-center pt-2.5 pb-1">
+              <span className="h-1 w-10 rounded-full bg-cream-300" aria-hidden />
+            </div>
+            <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-2">
+              <ProductFiltersPanel
+                filters={filters}
+                onChange={setFilters}
+                onClose={() => setDrawer(false)}
+                showSort
+                compact
+              />
+            </div>
+            <div className="shrink-0 border-t border-cream-200 bg-white px-3 pt-3 safe-bottom">
+              <div className="flex gap-2 pb-1">
+                <button
+                  type="button"
+                  className="btn-outline min-h-12 flex-1"
+                  onClick={() =>
+                    setFilters({
+                      ...defaultFilters,
+                      onSaleOnly: !!onlyOffers,
+                      categories: initialCategorySlug ? [initialCategorySlug] : [],
+                    })
+                  }
+                >
+                  مسح
+                </button>
+                <button
+                  type="button"
+                  className="btn-primary min-h-12 flex-[1.4]"
+                  onClick={() => setDrawer(false)}
+                >
+                  عرض {filtered.length}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

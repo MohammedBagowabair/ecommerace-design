@@ -390,7 +390,7 @@ export function CheckoutFlow() {
   }
 
   return (
-    <div className="container-pad py-6 sm:py-8">
+    <div className="container-pad pb-24 pt-5 sm:py-8 sm:pb-8">
       <div className="mb-6">
         <h1 className="page-title">إتمام الطلب</h1>
         <p className="page-subtitle">
@@ -914,13 +914,14 @@ export function CheckoutFlow() {
             </SectionCard>
           )}
 
-          <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+          {/* Desktop / tablet actions */}
+          <div className="hidden flex-col-reverse gap-3 sm:flex sm:flex-row sm:justify-between">
             {stepIndex > 0 ? (
-              <button type="button" className="btn-outline" onClick={goBack}>
+              <button type="button" className="btn-outline min-h-12" onClick={goBack}>
                 رجوع
               </button>
             ) : (
-              <Link href="/cart" className="btn-outline text-center">
+              <Link href="/cart" className="btn-outline min-h-12 text-center">
                 العودة إلى السلة
               </Link>
             )}
@@ -928,14 +929,14 @@ export function CheckoutFlow() {
             {step === "review" ? (
               <button
                 type="button"
-                className="btn-primary"
+                className="btn-primary min-h-12 min-w-[10rem]"
                 disabled={submitting}
                 onClick={confirmOrder}
               >
                 تأكيد الطلب
               </button>
             ) : (
-              <button type="button" className="btn-primary" onClick={goNext}>
+              <button type="button" className="btn-primary min-h-12 min-w-[8rem]" onClick={goNext}>
                 التالي
               </button>
             )}
@@ -955,9 +956,42 @@ export function CheckoutFlow() {
             }
           />
           {(step === "customer" || step === "address") && (
-            <p className="mt-2 text-center text-[11px] text-ink-light">
+            <p className="mt-2 hidden text-center text-[11px] text-ink-light sm:block">
               رسوم التوصيل تُحسب بعد اختيار طريقة التوصيل
             </p>
+          )}
+        </div>
+      </div>
+
+      {/* Sticky mobile checkout actions — thumb-friendly */}
+      <div className="sticky-cta-bar sm:hidden">
+        <div className="mx-auto flex max-w-lg items-center gap-2 px-3 py-2.5">
+          {stepIndex > 0 ? (
+            <button type="button" className="btn-outline min-h-12 flex-1" onClick={goBack}>
+              رجوع
+            </button>
+          ) : (
+            <Link href="/cart" className="btn-outline min-h-12 flex-1 text-center">
+              السلة
+            </Link>
+          )}
+          {step === "review" ? (
+            <button
+              type="button"
+              className="btn-primary min-h-12 flex-[1.6] text-base"
+              disabled={submitting}
+              onClick={confirmOrder}
+            >
+              تأكيد الطلب
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="btn-primary min-h-12 flex-[1.6] text-base"
+              onClick={goNext}
+            >
+              التالي
+            </button>
           )}
         </div>
       </div>

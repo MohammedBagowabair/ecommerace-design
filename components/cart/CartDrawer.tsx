@@ -66,7 +66,6 @@ export function CartDrawer() {
       )}
       aria-hidden={!open}
     >
-      {/* Backdrop */}
       <button
         type="button"
         aria-label="إغلاق السلة"
@@ -77,7 +76,6 @@ export function CartDrawer() {
         onClick={close}
       />
 
-      {/* Panel — RTL-aware: docks to logical end (left in Arabic RTL) */}
       <aside
         role="dialog"
         aria-modal="true"
@@ -88,7 +86,7 @@ export function CartDrawer() {
           open && "!translate-x-0"
         )}
       >
-        <header className="flex items-center justify-between border-b border-cream-200 bg-white px-4 py-4">
+        <header className="flex items-center justify-between border-b border-cream-200 bg-white px-4 py-3.5">
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-henna" />
             <h2 className="text-lg font-bold text-ink">سلتك</h2>
@@ -102,32 +100,30 @@ export function CartDrawer() {
             type="button"
             aria-label="إغلاق"
             onClick={close}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-muted transition hover:bg-cream-100 hover:text-ink"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition hover:bg-cream-100 hover:text-ink"
           >
             <X className="h-5 w-5" />
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
           {!rows.length ? (
             <div className="flex h-full flex-col items-center justify-center px-6 text-center">
-              <div className="mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-cream-100 to-blush/50 text-henna shadow-sm ring-1 ring-cream-200">
-                <ShoppingBag className="h-8 w-8" strokeWidth={1.4} />
+              <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-cream-100 text-henna ring-1 ring-cream-200">
+                <ShoppingBag className="h-7 w-7" strokeWidth={1.4} />
               </div>
-              <h3 className="text-xl font-bold tracking-tight text-ink">سلتك فارغة</h3>
-              <p className="mt-2.5 max-w-xs text-sm leading-relaxed text-ink-muted">
-                اكتشفي أجمل نقشات الحناء وأضيفي ما يعجبكِ — سلة أنيقة بانتظار اختياركِ.
-              </p>
+              <h3 className="text-lg font-bold text-ink">سلتك فارغة</h3>
+              <p className="mt-1.5 text-sm text-ink-muted">أضيفي نقشات لتبدئي الطلب</p>
               <Link
                 href="/products"
                 onClick={close}
-                className="btn-primary mt-7 min-w-[10rem]"
+                className="btn-primary mt-6 min-h-12 min-w-[11rem]"
               >
                 تصفحي النقشات
               </Link>
             </div>
           ) : (
-            <ul className="space-y-3">
+            <ul className="space-y-2.5">
               {rows.map(({ product, quantity, productId }) => (
                 <li key={productId}>
                   <CartLineItem
@@ -149,9 +145,9 @@ export function CartDrawer() {
         </div>
 
         {rows.length > 0 && (
-          <footer className="border-t border-cream-200 bg-white px-4 py-4 safe-bottom">
+          <footer className="border-t border-cream-200 bg-white px-4 pt-3 safe-bottom">
             <div className="flex items-center justify-between text-sm">
-              <span className="text-ink-muted">المجموع الفرعي</span>
+              <span className="text-ink-muted">المجموع</span>
               <span className="text-lg font-bold text-henna">
                 {formatPriceShort(subtotal)}
               </span>
@@ -162,23 +158,27 @@ export function CartDrawer() {
               </p>
             )}
             {available.length < rows.length && (
-              <p className="mt-2 text-xs text-red-600">
-                بعض المنتجات غير متوفرة ولن تُحسب في المجموع.
+              <p className="mt-1.5 text-xs text-red-600">
+                منتجات غير متوفرة لن تُحسب.
               </p>
             )}
-            <div className="mt-4 flex flex-col gap-2">
+            <div className="mt-3 flex flex-col gap-2 pb-1">
               <Link
                 href="/checkout"
                 onClick={close}
                 className={cn(
-                  "btn-primary w-full",
+                  "btn-primary min-h-12 w-full text-base",
                   available.length === 0 && "pointer-events-none opacity-50"
                 )}
               >
                 إتمام الشراء
               </Link>
-              <Link href="/cart" onClick={close} className="btn-outline w-full">
-                عرض السلة كاملة
+              <Link
+                href="/cart"
+                onClick={close}
+                className="btn-ghost min-h-11 w-full text-sm"
+              >
+                عرض السلة
               </Link>
             </div>
           </footer>

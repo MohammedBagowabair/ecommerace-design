@@ -119,18 +119,18 @@ export function Navbar() {
           </div>
         </div>
 
-        {/* Mobile */}
-        <div className="flex items-center gap-1.5 py-3 lg:hidden">
-          <Link href="/" className="shrink-0 text-xl font-bold text-henna">
+        {/* Mobile — one-hand friendly: brand + search + cart + menu */}
+        <div className="flex items-center gap-1 py-2.5 lg:hidden">
+          <Link href="/" className="shrink-0 text-lg font-bold text-henna sm:text-xl">
             {brand.name}
           </Link>
           <button
             type="button"
             onClick={openSearch}
-            className="relative mx-1 flex min-h-11 flex-1 items-center gap-2 rounded-full border border-cream-300 bg-cream-50 px-3.5 py-2 text-xs text-ink-light"
+            className="relative mx-0.5 flex min-h-11 min-w-0 flex-1 items-center gap-2 rounded-full border border-cream-300 bg-cream-50 px-3 py-2 text-xs text-ink-light"
           >
             <Search className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-            <span>ابحثي...</span>
+            <span className="truncate">ابحثي...</span>
           </button>
           <CartIconButton
             count={mounted ? cartCount : 0}
@@ -142,7 +142,7 @@ export function Navbar() {
             aria-label={open ? "إغلاق القائمة" : "فتح القائمة"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="flex h-11 w-11 items-center justify-center rounded-full text-ink transition hover:bg-cream-100"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink transition hover:bg-cream-100"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -194,15 +194,15 @@ export function Navbar() {
               <X className="h-5 w-5" />
             </button>
           </div>
-          <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="القائمة الرئيسية">
-            <div className="flex flex-col gap-1">
+          <nav className="flex-1 overflow-y-auto px-3 py-3 safe-bottom" aria-label="القائمة الرئيسية">
+            <div className="flex flex-col gap-0.5">
               {navLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "rounded-2xl px-4 py-3.5 text-sm font-semibold transition",
+                    "rounded-2xl px-4 py-3.5 text-[15px] font-semibold transition",
                     pathname === l.href
                       ? "bg-henna-50 text-henna"
                       : "text-ink hover:bg-cream-100"

@@ -210,6 +210,14 @@ img {
   html {
     scroll-behavior: auto;
   }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
   .animate-marquee,
   .animate-fadeIn,
   .animate-slideUp,
@@ -229,5 +237,50 @@ img {
   .btn-ghost:active,
   .btn-danger:active {
     transform: none !important;
+  }
+}
+
+/* Mobile-first speed + thumb UX */
+@layer components {
+  .section-pad {
+    @apply py-7 sm:py-10 lg:py-12;
+  }
+
+  .section-subtitle {
+    @apply mt-1 max-w-xl text-sm leading-relaxed text-ink-muted;
+  }
+
+  .bottom-sheet {
+    @apply absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col overflow-hidden rounded-t-[1.75rem] bg-cream shadow-float;
+  }
+
+  .sticky-cta-bar {
+    @apply fixed inset-x-0 bottom-0 z-40 border-t border-cream-200/80 bg-white/95 shadow-[0_-8px_30px_-12px_rgba(28,25,23,0.12)] backdrop-blur-md safe-bottom;
+  }
+}
+
+/* Soften heavy hover transforms on coarse pointers (phones) */
+@media (hover: none), (pointer: coarse) {
+  .card-soft {
+    transition: none;
+  }
+  .card-soft:hover {
+    box-shadow: 0 2px 16px -2px rgba(28, 25, 23, 0.06), 0 1px 3px rgba(28, 25, 23, 0.04);
+  }
+  .group:hover .group-hover\:scale-105,
+  .group:hover .group-hover\:scale-110 {
+    transform: none !important;
+  }
+}
+
+/* Extra-narrow phones (≈320) */
+@media (max-width: 360px) {
+  .container-pad {
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+  }
+  .page-title {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
   }
 }

@@ -41,16 +41,20 @@ function FilterSection({
   title,
   hint,
   children,
+  compact,
 }: {
   title: string;
   hint?: string;
   children: React.ReactNode;
+  compact?: boolean;
 }) {
   return (
     <div>
       <h3 className="mb-0.5 text-sm font-bold text-ink">{title}</h3>
-      {hint && <p className="mb-2.5 text-[11px] leading-relaxed text-ink-light">{hint}</p>}
-      {!hint && <div className="mb-2.5" />}
+      {hint && !compact && (
+        <p className="mb-2.5 text-[11px] leading-relaxed text-ink-light">{hint}</p>
+      )}
+      {(!hint || compact) && <div className="mb-2" />}
       {children}
     </div>
   );
@@ -62,19 +66,31 @@ export function ProductFiltersPanel({
   onClose,
   className,
   showSort = true,
+  compact = false,
 }: {
   filters: FilterState;
   onChange: (f: FilterState) => void;
   onClose?: () => void;
   className?: string;
   showSort?: boolean;
+  compact?: boolean;
 }) {
   return (
-    <aside className={cn("space-y-6 rounded-3xl border border-cream-200/60 bg-white p-5 shadow-card sm:p-6", className)}>
+    <aside
+      className={cn(
+        "space-y-5 rounded-3xl border border-cream-200/60 bg-white p-4 shadow-card sm:space-y-6 sm:p-6",
+        compact && "space-y-4 rounded-2xl border-0 bg-transparent p-1 shadow-none sm:p-1",
+        className
+      )}
+    >
       <div className="flex items-center justify-between gap-2">
         <div>
-          <h2 className="text-base font-bold text-ink">تصفية النتائج</h2>
-          <p className="mt-0.5 text-[11px] text-ink-light">اختاري ما يناسب ذوقكِ</p>
+          <h2 className="text-base font-bold text-ink">
+            {compact ? "تصفية" : "تصفية النتائج"}
+          </h2>
+          {!compact && (
+            <p className="mt-0.5 text-[11px] text-ink-light">اختاري ما يناسب ذوقكِ</p>
+          )}
         </div>
         {onClose && (
           <button
@@ -89,7 +105,7 @@ export function ProductFiltersPanel({
       </div>
 
       {showSort && (
-        <FilterSection title="الترتيب" hint="كيف تفضّلين عرض النقشات؟">
+        <FilterSection title="الترتيب" hint="كيف تفضّلين عرض النقشات؟" compact={compact}>
           <select
             className="input-field"
             value={filters.sort}
@@ -106,7 +122,7 @@ export function ProductFiltersPanel({
         </FilterSection>
       )}
 
-      <FilterSection title="القسم" hint="يد، قدم، مناسبات…">
+      <FilterSection title="القسم" hint="يد، قدم، مناسبات…" compact={compact}>
         <div className="flex flex-col gap-1">
           {getParentCategories(categories).map((c) => (
             <label
@@ -130,7 +146,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="الأقسام الفرعية" hint="حسب القسم الرئيسي المختار">
+      <FilterSection title="الأقسام الفرعية" hint="حسب القسم الرئيسي المختار" compact={compact}>
         <div className="flex flex-wrap gap-2">
           {(filters.categories.length
             ? filters.categories.flatMap((slug) => {
@@ -158,7 +174,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="نوع النقشة">
+      <FilterSection title="نوع النقشة" compact={compact}>
         <div className="flex flex-wrap gap-2">
           {patternTypes.map((p) => (
             <button
@@ -180,7 +196,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="المناسبة">
+      <FilterSection title="المناسبة" compact={compact}>
         <div className="flex flex-wrap gap-2">
           {occasions.map((o) => (
             <button
@@ -202,7 +218,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="السعر (ر.ي)" hint="حدّدي الميزانية المناسبة">
+      <FilterSection title="السعر (ر.ي)" hint="حدّدي الميزانية المناسبة" compact={compact}>
         <div className="flex items-center gap-2">
           <input
             type="number"
@@ -233,7 +249,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="التوفر والخصم">
+      <FilterSection title="التوفر والخصم" compact={compact}>
         <div className="space-y-1">
           <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 text-sm text-ink-muted transition hover:bg-cream-50">
             <input
@@ -260,7 +276,7 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <FilterSection title="التقييم">
+      <FilterSection title="التقييم" compact={compact}>
         <div className="flex flex-wrap gap-2">
           {[0, 3, 4, 4.5].map((r) => (
             <button
@@ -277,13 +293,15 @@ export function ProductFiltersPanel({
         </div>
       </FilterSection>
 
-      <button
-        type="button"
-        className="btn-outline w-full"
-        onClick={() => onChange({ ...defaultFilters })}
-      >
-        إعادة تعيين الفلاتر
-      </button>
+      {!compact && (
+        <button
+          type="button"
+          className="btn-outline w-full"
+          onClick={() => onChange({ ...defaultFilters })}
+        >
+          إعادة تعيين الفلاتر
+        </button>
+      )}
     </aside>
   );
 }
