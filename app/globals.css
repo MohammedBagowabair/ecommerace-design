@@ -1,0 +1,233 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #f7f5f1;
+  --foreground: #1c1917;
+  --henna: #6b3e2e;
+  --gold: #b8956a;
+  --blush: #f0e4de;
+  --muted: #6b6560;
+  --card: #ffffff;
+  --radius: 1.5rem;
+  --radius-btn: 9999px;
+  --touch: 2.75rem; /* 44px */
+  --space-section: 2.5rem;
+}
+
+html {
+  scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-cairo), Tahoma, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  text-rendering: optimizeLegibility;
+}
+
+/* Consistent focus rings for keyboard users */
+:focus-visible {
+  outline: 2px solid #b88874;
+  outline-offset: 2px;
+}
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible) {
+  outline: none;
+}
+
+@layer components {
+  .container-pad {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-white shadow-sm transition duration-250 hover:bg-henna-600 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none;
+  }
+
+  .btn-secondary {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-white/40 bg-white/20 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition duration-250 hover:bg-white/30 active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full border border-henna-200 bg-white px-5 py-2.5 text-sm font-semibold text-henna-600 transition duration-250 hover:border-henna-400 hover:bg-henna-50 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-ghost {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full px-4 py-2.5 text-sm font-semibold text-ink-muted transition duration-250 hover:bg-cream-100 hover:text-ink active:scale-[0.98];
+  }
+
+  .btn-danger {
+    @apply inline-flex min-h-[2.75rem] items-center justify-center gap-2 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition duration-250 hover:bg-red-700 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-admin {
+    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl bg-ink px-4 py-2 text-sm font-semibold text-white transition duration-250 hover:bg-henna-600 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-admin-outline {
+    @apply inline-flex min-h-[2.5rem] items-center justify-center gap-2 rounded-xl border border-cream-300 bg-white px-4 py-2 text-sm font-semibold text-ink transition duration-250 hover:border-henna-200 hover:bg-henna-50 active:scale-[0.98];
+  }
+
+  .card-soft {
+    @apply rounded-3xl bg-white shadow-card transition duration-300 hover:shadow-card-hover;
+  }
+
+  .card-panel {
+    @apply rounded-3xl border border-cream-200/80 bg-white shadow-card;
+  }
+
+  .section-title {
+    @apply text-xl font-bold leading-snug tracking-tight text-ink sm:text-2xl;
+  }
+
+  .section-eyebrow {
+    @apply text-xs font-semibold tracking-wide text-gold-600;
+  }
+
+  .input-pill {
+    @apply w-full rounded-full border border-cream-300 bg-cream-50 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+  }
+
+  .input-field {
+    @apply w-full rounded-2xl border border-cream-300 bg-cream-50 px-4 py-2.5 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+  }
+
+  .textarea-field {
+    @apply w-full resize-none rounded-2xl border border-cream-300 bg-cream-50 px-4 py-3 text-sm text-ink outline-none transition duration-250 placeholder:text-ink-light focus:border-henna-300 focus:bg-white focus:ring-2 focus:ring-henna-100;
+  }
+
+  .badge-pill {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-semibold;
+  }
+
+  .chip {
+    @apply inline-flex min-h-[2.5rem] items-center justify-center rounded-full px-3.5 py-1.5 text-xs font-semibold transition duration-250;
+  }
+
+  .chip-idle {
+    @apply chip bg-cream-100 text-ink-muted hover:bg-cream-200 hover:text-ink;
+  }
+
+  .chip-active {
+    @apply chip bg-ink text-white shadow-sm;
+  }
+
+  .touch-target {
+    @apply flex h-11 w-11 shrink-0 items-center justify-center;
+  }
+
+  .safe-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  .page-title {
+    @apply text-2xl font-bold tracking-tight text-ink sm:text-3xl;
+  }
+
+  .page-subtitle {
+    @apply mt-1.5 text-sm leading-relaxed text-ink-muted;
+  }
+
+  .field-hint {
+    @apply mt-1.5 text-xs leading-relaxed text-ink-light;
+  }
+
+  .field-error {
+    @apply mt-1.5 flex items-start gap-1.5 text-xs font-medium text-red-600;
+  }
+
+  .trust-row {
+    @apply flex items-start gap-3 rounded-2xl bg-cream-50 px-3.5 py-3 text-sm;
+  }
+
+  .admin-card {
+    @apply rounded-2xl border border-cream-200 bg-white p-4 shadow-card sm:p-5;
+  }
+
+  .admin-table-wrap {
+    @apply overflow-hidden rounded-2xl border border-cream-200 bg-white shadow-card;
+  }
+
+  .admin-table {
+    @apply w-full text-sm;
+  }
+
+  .admin-table thead tr {
+    @apply border-b border-cream-200 bg-cream-50/80 text-start text-xs text-ink-muted;
+  }
+
+  .admin-table th {
+    @apply px-4 py-3 font-semibold;
+  }
+
+  .admin-table td {
+    @apply px-4 py-3.5;
+  }
+
+  .admin-table tbody tr {
+    @apply border-b border-cream-100 transition hover:bg-cream-50/60 last:border-0;
+  }
+
+  .price-lg {
+    @apply text-lg font-bold tabular-nums text-henna sm:text-xl;
+  }
+
+  .price-md {
+    @apply text-base font-bold tabular-nums text-henna;
+  }
+
+  .meta-sm {
+    @apply text-[11px] text-ink-light;
+  }
+}
+
+/* Hide scrollbar for carousels but keep scroll */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* RTL-friendly search cancel */
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .animate-fadeIn,
+  .animate-slideUp,
+  .animate-slideInStart,
+  .animate-pulseSoft,
+  .animate-badgePop {
+    animation: none !important;
+  }
+  .card-soft:hover,
+  .group:hover .group-hover\:scale-105,
+  .group:hover .group-hover\:scale-110 {
+    transform: none !important;
+  }
+  .btn-primary:active,
+  .btn-outline:active,
+  .btn-secondary:active,
+  .btn-ghost:active,
+  .btn-danger:active {
+    transform: none !important;
+  }
+}

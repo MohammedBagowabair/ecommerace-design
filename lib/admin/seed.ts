@@ -1,0 +1,178 @@
+import type { AdminRole, AdminUser, Permission } from "./types";
+import { ALL_PERMISSIONS } from "./permissions";
+
+const adminOnly: Permission[] = ALL_PERMISSIONS.filter((p) => p !== "roles.manage");
+
+const opsPerms: Permission[] = [
+  "dashboard.view",
+  "orders.view",
+  "orders.manage",
+  "products.view",
+  "products.manage",
+  "categories.manage",
+  "offers.manage",
+  "customers.view",
+];
+
+const viewerPerms: Permission[] = [
+  "dashboard.view",
+  "orders.view",
+  "products.view",
+  "customers.view",
+];
+
+export const seedRoles: AdminRole[] = [
+  {
+    id: "role-super-admin",
+    slug: "super_admin",
+    name: "مدير أعلى",
+    description: "صلاحيات كاملة على كل أقسام لوحة التحكم",
+    permissions: [...ALL_PERMISSIONS],
+    isSystem: true,
+  },
+  {
+    id: "role-admin",
+    slug: "admin",
+    name: "مدير",
+    description: "معظم الصلاحيات باستثناء إدارة الأدوار",
+    permissions: adminOnly,
+    isSystem: true,
+  },
+  {
+    id: "role-ops",
+    slug: "ops",
+    name: "تشغيل",
+    description: "الطلبات والمنتجات والعروض بدون إدارة المستخدمين",
+    permissions: opsPerms,
+    isSystem: true,
+  },
+  {
+    id: "role-viewer",
+    slug: "viewer",
+    name: "مشاهد",
+    description: "عرض فقط — بدون تعديل",
+    permissions: viewerPerms,
+    isSystem: true,
+  },
+];
+
+export const seedAdminUsers: AdminUser[] = [
+  {
+    id: "au-001",
+    name: "محمد باغووبير",
+    email: "super@naqshat.ye",
+    phone: "777000001",
+    roleId: "role-super-admin",
+    status: "active",
+    lastLoginAt: "2026-09-10T08:15:00.000Z",
+    createdAt: "2026-01-10T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-002",
+    name: "نورة الحنّاء",
+    email: "admin@naqshat.ye",
+    phone: "777000002",
+    roleId: "role-admin",
+    status: "active",
+    lastLoginAt: "2026-09-09T14:22:00.000Z",
+    createdAt: "2026-02-01T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-003",
+    name: "أحمد العمليات",
+    email: "ops@naqshat.ye",
+    phone: "777000003",
+    roleId: "role-ops",
+    status: "active",
+    lastLoginAt: "2026-09-11T06:40:00.000Z",
+    createdAt: "2026-03-15T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-004",
+    name: "سلمى المشاهدة",
+    email: "viewer@naqshat.ye",
+    phone: "777000004",
+    roleId: "role-viewer",
+    status: "active",
+    lastLoginAt: "2026-09-08T11:05:00.000Z",
+    createdAt: "2026-04-20T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-005",
+    name: "فاطمة اليمنية",
+    email: "fatima@naqshat.ye",
+    phone: "733111222",
+    roleId: "role-admin",
+    status: "active",
+    lastLoginAt: "2026-09-07T16:30:00.000Z",
+    createdAt: "2026-05-01T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-006",
+    name: "خالد المخزن",
+    email: "khaled@naqshat.ye",
+    phone: "735444555",
+    roleId: "role-ops",
+    status: "active",
+    lastLoginAt: "2026-09-06T09:12:00.000Z",
+    createdAt: "2026-05-12T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-007",
+    name: "هدى التقارير",
+    email: "huda@naqshat.ye",
+    phone: "770888999",
+    roleId: "role-viewer",
+    status: "active",
+    lastLoginAt: "2026-08-30T13:00:00.000Z",
+    createdAt: "2026-06-01T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-008",
+    name: "ياسر المعطّل",
+    email: "disabled@naqshat.ye",
+    phone: "711222333",
+    roleId: "role-ops",
+    status: "disabled",
+    lastLoginAt: "2026-07-15T10:00:00.000Z",
+    createdAt: "2026-06-20T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-009",
+    name: "ريم التسويق",
+    email: "reem@naqshat.ye",
+    phone: "739000111",
+    roleId: "role-admin",
+    status: "active",
+    lastLoginAt: "2026-09-10T19:45:00.000Z",
+    createdAt: "2026-07-01T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+  {
+    id: "au-010",
+    name: "عمر الدعم",
+    email: "omar@naqshat.ye",
+    phone: "712345678",
+    roleId: "role-ops",
+    status: "active",
+    lastLoginAt: null,
+    createdAt: "2026-08-01T10:00:00.000Z",
+    demoPassword: "demo123",
+  },
+];
+
+/** Shown on login page for demo */
+export const DEMO_ACCOUNTS = [
+  { email: "super@naqshat.ye", role: "مدير أعلى", password: "demo123" },
+  { email: "admin@naqshat.ye", role: "مدير", password: "demo123" },
+  { email: "ops@naqshat.ye", role: "تشغيل", password: "demo123" },
+  { email: "viewer@naqshat.ye", role: "مشاهد", password: "demo123" },
+];
