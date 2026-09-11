@@ -6,16 +6,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Heart,
+  LogIn,
+  LogOut,
   Menu,
   Search,
   ShoppingBag,
   User,
+  UserPlus,
   X,
 } from "lucide-react";
 import { brand, navLinks } from "@/lib/data";
 import { useCartStore } from "@/lib/store/cart";
 import { useWishlistStore } from "@/lib/store/wishlist";
 import { useUIStore } from "@/lib/store/ui";
+import {
+  ensureCustomerAuthHydrated,
+  useCustomerAuthStore,
+} from "@/lib/store/customer-auth";
+import { useToastStore } from "@/lib/store/toast";
 import { cn } from "@/lib/utils";
 
 export function Navbar() {
@@ -26,11 +34,40 @@ export function Navbar() {
   const wishCount = useWishlistStore((s) => s.ids.length);
   const openCart = useUIStore((s) => s.openCartDrawer);
   const openSearch = useUIStore((s) => s.openSearchOverlay);
+  const session = useCustomerAuthStore((s) => s.session);
+  const logout = useCustomerAuthStore((s) => s.logout);
+  const showToast = useToastStore((s) => s.show);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
   const prevCount = useRef(cartCount);
   const [badgeBump, setBadgeBump] = useState(false);
 
-  useEffect(() => setMounted(true), []);
-  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    setMounted(true);
+    ensureCustomerAuthHydrated();
+  }, []);
+  useEffect(() => {
+    setOpen(false);
+    setAccountMenuOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!accountMenuOpen) return;
+    const onDoc = (e: MouseEvent) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target as Node)) {
+        setAccountMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [accountMenuOpen]);
+
+  function handleLogout() {
+    logout();
+    setAccountMenuOpen(false);
+    setOpen(false);
+    showToast("تم تسجيل الخروج", "info");
+  }
 
   useEffect(() => {
     if (mounted && cartCount > prevCount.current) {
@@ -115,9 +152,76 @@ export function Navbar() {
               onClick={openCart}
               bump={badgeBump}
             />
-            <IconLink href="/account" label="حسابي" count={0}>
-              <User className="h-5 w-5" strokeWidth={1.75} />
-            </IconLink>
+            <div className="relative" ref={accountMenuRef}>
+              <button
+                type="button"
+                aria-label="حسابي"
+                aria-expanded={accountMenuOpen}
+                onClick={() => setAccountMenuOpen((v) => !v)}
+                className="relative flex h-11 w-11 items-center justify-center rounded-full text-ink-muted transition duration-250 hover:bg-cream-100 hover:text-ink"
+              >
+                <User className="h-5 w-5" strokeWidth={1.75} />
+                {mounted && session && (
+                  <span className="absolute bottom-1 end-1 h-2 w-2 rounded-full bg-henna ring-2 ring-white" />
+                )}
+              </button>
+              {accountMenuOpen && (
+                <div
+                  role="menu"
+                  className="absolute end-0 top-full z-50 mt-2 w-52 overflow-hidden rounded-2xl border border-cream-200 bg-white py-1.5 shadow-float"
+                >
+                  {mounted && session ? (
+                    <>
+                      <div className="border-b border-cream-100 px-3.5 py-2.5">
+                        <p className="truncate text-sm font-bold text-ink">{session.name}</p>
+                        <p className="truncate text-[11px] text-ink-muted">
+                          {session.email || session.phone}
+                        </p>
+                      </div>
+                      <Link
+                        href="/account"
+                        role="menuitem"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-ink hover:bg-cream-50"
+                      >
+                        <User className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                        حسابي
+                      </Link>
+                      <button
+                        type="button"
+                        role="menuitem"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-ink hover:bg-cream-50"
+                      >
+                        <LogOut className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                        تسجيل الخروج
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/login"
+                        role="menuitem"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-ink hover:bg-cream-50"
+                      >
+                        <LogIn className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                        تسجيل الدخول
+                      </Link>
+                      <Link
+                        href="/register"
+                        role="menuitem"
+                        onClick={() => setAccountMenuOpen(false)}
+                        className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-ink hover:bg-cream-50"
+                      >
+                        <UserPlus className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                        إنشاء حساب
+                      </Link>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -257,14 +361,51 @@ export function Navbar() {
                 </span>
               )}
             </Link>
-            <Link
-              href="/account"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
-            >
-              <User className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
-              حسابي
-            </Link>
+            {mounted && session ? (
+              <>
+                <div className="rounded-2xl bg-cream-50 px-4 py-3">
+                  <p className="truncate text-sm font-bold text-ink">{session.name}</p>
+                  <p className="truncate text-xs text-ink-muted">
+                    {session.email || session.phone}
+                  </p>
+                </div>
+                <Link
+                  href="/account"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
+                >
+                  <User className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                  حسابي
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-start text-sm font-semibold text-ink hover:bg-cream-100"
+                >
+                  <LogOut className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                  تسجيل الخروج
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
+                >
+                  <LogIn className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
+                  تسجيل الدخول
+                </Link>
+                <Link
+                  href="/register"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-3 rounded-2xl bg-henna-50 px-4 py-3.5 text-sm font-bold text-henna hover:bg-henna-100"
+                >
+                  <UserPlus className="h-4 w-4" strokeWidth={1.75} />
+                  إنشاء حساب
+                </Link>
+              </>
+            )}
           </nav>
         </aside>
       </div>,

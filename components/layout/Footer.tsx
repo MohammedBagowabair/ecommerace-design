@@ -7,6 +7,16 @@ import { getParentCategories } from "@/lib/data/categories";
 import { useAdminOpsStore } from "@/lib/store/admin-ops";
 import { resolveDeliveryCopy } from "@/lib/delivery-settings";
 
+const infoLinks = [
+  { href: "/about", label: "من نحن" },
+  { href: "/contact", label: "تواصل معنا" },
+  { href: "/faq", label: "أسئلة شائعة" },
+  { href: "/shipping", label: "الشحن والتوصيل" },
+  { href: "/refund", label: "الاسترجاع والاستبدال" },
+  { href: "/privacy", label: "سياسة الخصوصية" },
+  { href: "/terms", label: "الشروط والأحكام" },
+];
+
 export function Footer() {
   const settings = useAdminOpsStore((s) => s.settings);
   const ensureSeeded = useAdminOpsStore((s) => s.ensureSeeded);
@@ -66,10 +76,20 @@ export function Footer() {
               </li>
             ))}
           </ul>
+          <h3 className="mb-3 mt-6 text-sm font-bold text-ink">معلومات المتجر</h3>
+          <ul className="space-y-2 text-sm text-ink-muted">
+            {infoLinks.map((l) => (
+              <li key={l.href}>
+                <Link href={l.href} className="transition hover:text-henna">
+                  {l.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div>
-          <h3 className="mb-3 text-sm font-bold text-ink">معلومات</h3>
+          <h3 className="mb-3 text-sm font-bold text-ink">تواصل</h3>
           <ul className="space-y-2 text-sm text-ink-muted">
             <li>الدفع: تحويل بنكي</li>
             <li>
@@ -85,6 +105,11 @@ export function Footer() {
               >
                 واتساب {whatsappDisplay}
               </a>
+            </li>
+            <li>
+              <Link href="/contact" className="font-semibold text-henna hover:underline">
+                نموذج تواصل معنا
+              </Link>
             </li>
             <li className="pt-2 text-xs text-ink-light">
               الأسعار بـ {brand.currency}

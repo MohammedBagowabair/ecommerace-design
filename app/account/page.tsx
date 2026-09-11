@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   ChevronLeft,
   Heart,
+  KeyRound,
   MapPin,
   Package,
   Star,
@@ -47,6 +48,12 @@ const hubCards = [
     label: "تقييماتي",
     desc: "تقييماتكِ للمنتجات",
     icon: Star,
+  },
+  {
+    href: "/account/change-password",
+    label: "تغيير كلمة المرور",
+    desc: "تحديث كلمة مرور الحساب",
+    icon: KeyRound,
   },
 ] as const;
 

@@ -5,12 +5,17 @@ import { usePathname } from "next/navigation";
 import {
   ChevronLeft,
   Heart,
+  KeyRound,
+  LogOut,
   MapPin,
   Package,
   Star,
   User,
   UserCircle2,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCustomerAuthStore } from "@/lib/store/customer-auth";
+import { useToastStore } from "@/lib/store/toast";
 import { cn } from "@/lib/utils";
 
 export const accountLinks: {
@@ -25,10 +30,20 @@ export const accountLinks: {
   { href: "/account/orders", label: "طلباتي", icon: Package },
   { href: "/wishlist", label: "مفضلتي", icon: Heart },
   { href: "/account/reviews", label: "تقييماتي", icon: Star },
+  { href: "/account/change-password", label: "تغيير كلمة المرور", icon: KeyRound },
 ];
 
 export function AccountNav({ className }: { className?: string }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const logout = useCustomerAuthStore((s) => s.logout);
+  const showToast = useToastStore((s) => s.show);
+
+  function handleLogout() {
+    logout();
+    showToast("تم تسجيل الخروج", "info");
+    router.push("/login");
+  }
 
   return (
     <nav
@@ -59,6 +74,14 @@ export function AccountNav({ className }: { className?: string }) {
           </Link>
         );
       })}
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="inline-flex shrink-0 items-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-ink-muted shadow-card transition hover:bg-cream-100 hover:text-ink sm:mt-1 sm:w-full sm:rounded-2xl"
+      >
+        <LogOut className="h-4 w-4" strokeWidth={1.75} />
+        تسجيل الخروج
+      </button>
     </nav>
   );
 }

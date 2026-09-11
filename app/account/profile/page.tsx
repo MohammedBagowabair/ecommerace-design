@@ -52,7 +52,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <AccountShell title="معلوماتي" subtitle="تعديل بيانات الحساب (وهمي — بدون تسجيل دخول)">
+    <AccountShell title="معلوماتي" subtitle="تعديل بيانات الحساب (محفوظ محليًا — تجريبي)">
       <form
         onSubmit={onSave}
         className="rounded-3xl bg-white p-5 shadow-card sm:p-6"
