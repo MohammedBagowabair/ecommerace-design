@@ -48,7 +48,7 @@ export const seedOrders: Order[] = [
   {
     id: "ORD-2026-00119",
     createdAt: "2026-09-02T14:40:00.000Z",
-    status: "out_for_delivery",
+    status: "preparing",
     customer: { name: "سارة أحمد", phone: "777123456" },
     address: home,
     deliveryMethodId: "standard",
@@ -137,7 +137,7 @@ export const seedOrders: Order[] = [
   {
     id: "ORD-2026-00122",
     createdAt: "2026-09-08T11:00:00.000Z",
-    status: "ready_for_delivery",
+    status: "preparing",
     customer: { name: "سارة أحمد", phone: "777123456" },
     address: home,
     deliveryMethodId: "standard",

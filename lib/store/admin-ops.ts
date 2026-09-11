@@ -12,22 +12,33 @@ import type {
   ActivityEvent,
   AdminNotification,
   CategoryOverride,
+  CustomCategory,
   CustomProduct,
   ProductOverride,
   StoreSettings,
 } from "../admin/ops-types";
+import { normalizeOrderStatus } from "../order-status";
 
 const defaultSettings = (): StoreSettings => ({
   storeName: brand.name,
   whatsapp: storeContact.whatsapp,
   whatsappDisplay: storeContact.whatsappDisplay,
   bankAccounts: seedBanks.map((b) => ({ ...b })),
+  yerPerSar: 150, // illustrative mock default: 1 SAR ≈ 150 YER
+  deliveryMinDays: 2,
+  deliveryMaxDays: 5,
+  deliveryLabel: "التوصيل إلى عنوانك",
+  deliveryText: "خلال أيام العمل المحددة · يمكن ضبط المدة من الإعدادات",
+  pickupEnabled: true,
+  pickupLabel: "استلام من المتجر",
+  pickupText: "مجاني · جاهز خلال وقت قصير بعد تأكيد الطلب",
 });
 
 interface AdminOpsState {
   hydrated: boolean;
   productOverrides: Record<string, ProductOverride>;
   categoryOverrides: Record<string, CategoryOverride>;
+  customCategories: CustomCategory[];
   customProducts: CustomProduct[];
   offers: Offer[];
   offersSeeded: boolean;
@@ -48,6 +59,9 @@ interface AdminOpsState {
   updateCustomProduct: (id: string, patch: Partial<CustomProduct>) => void;
   deleteCustomProduct: (id: string) => void;
   setCategoryOverride: (id: string, patch: CategoryOverride) => void;
+  addCustomCategory: (cat: Omit<CustomCategory, "createdAt">) => string;
+  updateCustomCategory: (id: string, patch: Partial<CustomCategory>) => void;
+  deleteCustomCategory: (id: string) => boolean;
   upsertOffer: (offer: Offer) => void;
   deleteOffer: (id: string) => void;
   setOfferActive: (id: string, isActive: boolean) => void;
@@ -71,6 +85,12 @@ function newActivityId(): string {
   return `act-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 5)}`;
 }
 
+function mockClientIp(): string {
+  // Deterministic-ish mock IP for audit display
+  const n = Math.floor(Math.random() * 200) + 20;
+  return `185.12.${n}.${Math.floor(Math.random() * 250) + 1}`;
+}
+
 export { newOfferId, newProductId };
 
 export const useAdminOpsStore = create<AdminOpsState>()(
@@ -79,6 +99,7 @@ export const useAdminOpsStore = create<AdminOpsState>()(
       hydrated: false,
       productOverrides: {},
       categoryOverrides: {},
+      customCategories: [],
       customProducts: [],
       offers: [],
       offersSeeded: false,
@@ -104,26 +125,70 @@ export const useAdminOpsStore = create<AdminOpsState>()(
           next.settings = {
             ...defaultSettings(),
             ...s.settings,
+            yerPerSar:
+              s.settings.yerPerSar && s.settings.yerPerSar > 0
+                ? s.settings.yerPerSar
+                : defaultSettings().yerPerSar,
             bankAccounts:
               s.settings.bankAccounts?.length > 0
                 ? s.settings.bankAccounts
                 : defaultSettings().bankAccounts,
           };
           next.settingsSeeded = true;
+        } else if (s.settings) {
+          const d = defaultSettings();
+          const needsFx = !(s.settings.yerPerSar && s.settings.yerPerSar > 0);
+          const needsDelivery =
+            !s.settings.deliveryMinDays ||
+            !s.settings.deliveryMaxDays ||
+            !s.settings.deliveryLabel;
+          if (needsFx || needsDelivery) {
+            next.settings = {
+              ...d,
+              ...s.settings,
+              yerPerSar: needsFx ? d.yerPerSar : s.settings.yerPerSar,
+              deliveryMinDays: s.settings.deliveryMinDays ?? d.deliveryMinDays,
+              deliveryMaxDays: s.settings.deliveryMaxDays ?? d.deliveryMaxDays,
+              deliveryLabel: s.settings.deliveryLabel ?? d.deliveryLabel,
+              deliveryText: s.settings.deliveryText ?? d.deliveryText,
+              pickupEnabled: s.settings.pickupEnabled ?? d.pickupEnabled,
+              pickupLabel: s.settings.pickupLabel ?? d.pickupLabel,
+              pickupText: s.settings.pickupText ?? d.pickupText,
+            };
+          }
         }
         if (!s.extraOrdersSeeded || !s.extraOrders.length) {
           const ids = new Set(s.extraOrders.map((o) => o.id));
           const missing = adminExtraOrders.filter((o) => !ids.has(o.id));
+          const mappedMissing = missing.map((o) => ({
+            ...o,
+            status: normalizeOrderStatus(o.status as string),
+            items: o.items.map((i) => ({ ...i })),
+            customer: { ...o.customer },
+            address: { ...o.address },
+          }));
           next.extraOrders =
             s.extraOrders.length > 0
-              ? [...s.extraOrders, ...missing]
+              ? [
+                  ...s.extraOrders.map((o) => ({
+                    ...o,
+                    status: normalizeOrderStatus(o.status as string),
+                  })),
+                  ...mappedMissing,
+                ]
               : adminExtraOrders.map((o) => ({
                   ...o,
+                  status: normalizeOrderStatus(o.status as string),
                   items: o.items.map((i) => ({ ...i })),
                   customer: { ...o.customer },
                   address: { ...o.address },
                 }));
           next.extraOrdersSeeded = true;
+        } else if (s.extraOrders.length) {
+          next.extraOrders = s.extraOrders.map((o) => ({
+            ...o,
+            status: normalizeOrderStatus(o.status as string),
+          }));
         }
         if (!s.notificationsSeeded || !s.notifications.length) {
           const ids = new Set(s.notifications.map((n) => n.id));
@@ -205,6 +270,38 @@ export const useAdminOpsStore = create<AdminOpsState>()(
             [id]: { ...s.categoryOverrides[id], ...patch },
           },
         })),
+      addCustomCategory: (cat) => {
+        const id = cat.id || `ccat-${Date.now().toString(36)}`;
+        const entry: CustomCategory = {
+          ...cat,
+          id,
+          createdAt: new Date().toISOString(),
+        };
+        set((s) => ({ customCategories: [entry, ...s.customCategories] }));
+        return id;
+      },
+      updateCustomCategory: (id, patch) =>
+        set((s) => ({
+          customCategories: s.customCategories.map((c) =>
+            c.id === id ? { ...c, ...patch, id: c.id } : c
+          ),
+        })),
+      deleteCustomCategory: (id) => {
+        const { customCategories } = get();
+        const target = customCategories.find((c) => c.id === id);
+        if (!target) return false;
+        const hasChildren = customCategories.some((c) => c.parentId === id);
+        if (hasChildren) return false;
+        set((s) => {
+          const nextOverrides = { ...s.categoryOverrides };
+          delete nextOverrides[id];
+          return {
+            customCategories: s.customCategories.filter((c) => c.id !== id),
+            categoryOverrides: nextOverrides,
+          };
+        });
+        return true;
+      },
       upsertOffer: (offer) =>
         set((s) => {
           const idx = s.offers.findIndex((o) => o.id === offer.id);
@@ -263,9 +360,15 @@ export const useAdminOpsStore = create<AdminOpsState>()(
           id: event.id ?? newActivityId(),
           createdAt: event.createdAt ?? new Date().toISOString(),
           actorName: event.actorName,
+          actorId: event.actorId,
           action: event.action,
           target: event.target,
+          entityType: event.entityType,
+          entityId: event.entityId,
+          before: event.before,
+          after: event.after,
           meta: event.meta,
+          ip: event.ip ?? mockClientIp(),
         };
         set((s) => ({ activity: [entry, ...s.activity] }));
       },
@@ -275,6 +378,7 @@ export const useAdminOpsStore = create<AdminOpsState>()(
       partialize: (s) => ({
         productOverrides: s.productOverrides,
         categoryOverrides: s.categoryOverrides,
+        customCategories: s.customCategories,
         customProducts: s.customProducts,
         offers: s.offers,
         offersSeeded: s.offersSeeded,
@@ -313,6 +417,8 @@ export function blankCustomProduct(
       : [
           "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80",
         ],
+    videos: partial.videos,
+    subcategoryId: partial.subcategoryId,
     badges: partial.badges || [],
     rating: 0,
     reviewCount: 0,

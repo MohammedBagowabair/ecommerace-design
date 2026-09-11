@@ -4,6 +4,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Order, OrderStatus } from "../types";
 import { seedOrders } from "../data/seed-orders";
+import { normalizeOrderStatus } from "../order-status";
 
 interface OrdersState {
   orders: Order[];
@@ -19,13 +20,6 @@ interface OrdersState {
 
 function padSeq(n: number): string {
   return String(n).padStart(5, "0");
-}
-
-/** Map Phase 3 statuses to Phase 4 expanded set */
-function normalizeOrderStatus(status: string): Order["status"] {
-  if (status === "awaiting_receipt") return "payment_review";
-  if (status === "confirmed") return "payment_confirmed";
-  return status as Order["status"];
 }
 
 function normalizeOrders(orders: Order[]): Order[] {

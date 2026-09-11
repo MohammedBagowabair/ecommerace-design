@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, Plus, ShoppingBag } from "lucide-react";
 import type { Product } from "@/lib/types";
-import { formatPriceShort, getDiscountPercent, cn } from "@/lib/utils";
+import { formatPriceShort, formatSarFromYer, getDiscountPercent, cn } from "@/lib/utils";
+import { useAdminOpsStore } from "@/lib/store/admin-ops";
 import { Badge, DiscountBadge } from "@/components/ui/Badge";
 import { StockOverlay } from "@/components/ui/StockBadge";
 import { StarRating } from "@/components/ui/StarRating";
@@ -18,7 +19,9 @@ export function ProductCard({ product }: { product: Product }) {
   const { has, toggle } = useWishlistStore();
   const showToast = useToastStore((s) => s.show);
   const openCart = useUIStore((s) => s.openCartDrawer);
+  const yerPerSar = useAdminOpsStore((s) => s.settings.yerPerSar);
   const wished = has(product.id);
+  const sarLabel = formatSarFromYer(product.price, yerPerSar);
   const discount = getDiscountPercent(product.price, product.compareAtPrice);
   const out = product.stockStatus === "out_of_stock" || product.stock <= 0;
 
@@ -98,6 +101,9 @@ export function ProductCard({ product }: { product: Product }) {
             <p className="price-md leading-none">
               {formatPriceShort(product.price)}
             </p>
+            {sarLabel && (
+              <p className="mt-0.5 text-[10px] text-ink-muted">≈ {sarLabel}</p>
+            )}
             {product.compareAtPrice && (
               <p className="mt-1 text-[11px] text-ink-light line-through">
                 {formatPriceShort(product.compareAtPrice)}

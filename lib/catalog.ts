@@ -1,10 +1,14 @@
-import { categories } from "./data/categories";
+import {
+  categories,
+  expandCategoryIds,
+} from "./data/categories";
 import { products } from "./data/products";
 import type { Product, SortOption } from "./types";
 import { productMatchesQuery } from "./utils";
 
 export type CatalogFilterInput = {
   categories: string[];
+  subcategories?: string[];
   patternTypes: string[];
   occasions: string[];
   priceMin: number;
@@ -16,10 +20,14 @@ export type CatalogFilterInput = {
   query?: string;
   onlyNew?: boolean;
   onlyOffers?: boolean;
+  /** Optional catalog override (e.g. admin-merged client list) */
+  sourceProducts?: Product[];
+  sourceCategories?: typeof categories;
 };
 
 export function filterAndSortProducts(input: CatalogFilterInput): Product[] {
-  let list = products.filter((p) => !p.isStub);
+  const catalog = input.sourceCategories ?? categories;
+  let list = (input.sourceProducts ?? products).filter((p) => !p.isStub);
 
   const q = input.query?.trim();
   if (q) list = list.filter((p) => productMatchesQuery(p, q));
@@ -30,10 +38,31 @@ export function filterAndSortProducts(input: CatalogFilterInput): Product[] {
   }
 
   if (input.categories.length) {
-    const ids = categories
-      .filter((c) => input.categories.includes(c.slug))
-      .map((c) => c.id);
-    list = list.filter((p) => p.categoryIds.some((id) => ids.includes(id)));
+    const selected = catalog.filter((c) => input.categories.includes(c.slug));
+    const ids = expandCategoryIds(selected.map((c) => c.id), catalog);
+    list = list.filter(
+      (p) =>
+        p.categoryIds.some((id) => ids.includes(id)) ||
+        (p.subcategoryId ? ids.includes(p.subcategoryId) : false)
+    );
+  }
+
+  const subcats = input.subcategories ?? [];
+  if (subcats.length) {
+    const subIds = new Set(
+      catalog
+        .filter(
+          (c) =>
+            subcats.includes(c.slug) ||
+            subcats.includes(c.id)
+        )
+        .map((c) => c.id)
+    );
+    list = list.filter(
+      (p) =>
+        p.categoryIds.some((id) => subIds.has(id)) ||
+        (p.subcategoryId ? subIds.has(p.subcategoryId) : false)
+    );
   }
 
   if (input.patternTypes.length) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { categories, occasions, patternTypes, priceRange } from "@/lib/data";
+import { getChildCategories, getParentCategories } from "@/lib/data/categories";
 import { sortOptions } from "@/lib/catalog";
 import type { SortOption } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -8,6 +9,7 @@ import { X } from "lucide-react";
 
 export type FilterState = {
   categories: string[];
+  subcategories: string[];
   patternTypes: string[];
   occasions: string[];
   priceMin: number;
@@ -20,6 +22,7 @@ export type FilterState = {
 
 export const defaultFilters: FilterState = {
   categories: [],
+  subcategories: [],
   patternTypes: [],
   occasions: [],
   priceMin: priceRange.min,
@@ -105,7 +108,7 @@ export function ProductFiltersPanel({
 
       <FilterSection title="القسم" hint="يد، قدم، مناسبات…">
         <div className="flex flex-col gap-1">
-          {categories.map((c) => (
+          {getParentCategories(categories).map((c) => (
             <label
               key={c.id}
               className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2 text-sm text-ink-muted transition hover:bg-cream-50"
@@ -123,6 +126,34 @@ export function ProductFiltersPanel({
               />
               <span className="font-medium">{c.name}</span>
             </label>
+          ))}
+        </div>
+      </FilterSection>
+
+      <FilterSection title="الأقسام الفرعية" hint="حسب القسم الرئيسي المختار">
+        <div className="flex flex-wrap gap-2">
+          {(filters.categories.length
+            ? filters.categories.flatMap((slug) => {
+                const parent = categories.find((c) => c.slug === slug);
+                return parent ? getChildCategories(parent.id) : [];
+              })
+            : categories.filter((c) => !!c.parentId)
+          ).map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() =>
+                onChange({
+                  ...filters,
+                  subcategories: toggleInList(filters.subcategories, c.slug),
+                })
+              }
+              className={
+                filters.subcategories.includes(c.slug) ? "chip-active" : "chip-idle"
+              }
+            >
+              {c.name}
+            </button>
           ))}
         </div>
       </FilterSection>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import {
   Building2,
@@ -15,9 +14,14 @@ import type { Product, Review } from "@/lib/types";
 import {
   formatPrice,
   formatPriceShort,
+  formatSarFromYer,
   getDiscountPercent,
   cn,
 } from "@/lib/utils";
+import { SafeMedia } from "@/components/media/SafeMedia";
+import { useAdminOpsStore } from "@/lib/store/admin-ops";
+import { resolveDeliveryCopy } from "@/lib/delivery-settings";
+import { isVideoSrc } from "@/lib/media/compress";
 import { Badge, DiscountBadge } from "@/components/ui/Badge";
 import { StockBadge } from "@/components/ui/StockBadge";
 import { StarRating } from "@/components/ui/StarRating";
@@ -55,6 +59,17 @@ export function ProductDetail({
   const showToast = useToastStore((s) => s.show);
   const openCart = useUIStore((s) => s.openCartDrawer);
   const wished = has(product.id);
+  const settings = useAdminOpsStore((s) => s.settings);
+  const ensureOps = useAdminOpsStore((s) => s.ensureSeeded);
+  useEffect(() => {
+    ensureOps();
+  }, [ensureOps]);
+  const deliveryCopy = resolveDeliveryCopy(settings);
+  const sarLabel = formatSarFromYer(product.price, settings.yerPerSar);
+  const gallery = [
+    ...(product.images ?? []),
+    ...((product.videos ?? []).filter(Boolean)),
+  ];
   const userReviews = useReviewsStore((s) => s.reviews);
   const allReviews = useMemo(() => {
     const userForProduct = userReviews.filter((r) => r.productId === product.id);
@@ -73,6 +88,7 @@ export function ProductDetail({
 
   useEffect(() => {
     addRecent(product.id);
+    setImg(0);
   }, [product.id, addRecent]);
 
   const onAdd = () => {
@@ -138,13 +154,17 @@ export function ProductDetail({
           {/* Gallery */}
           <div>
             <div className="relative aspect-square overflow-hidden rounded-[1.75rem] bg-cream-100 shadow-card">
-              <Image
-                src={product.images[img]}
+              <SafeMedia
+                src={gallery[img] ?? product.images[0]}
                 alt={product.name}
                 fill
                 priority
                 sizes="(max-width:1024px) 100vw, 50vw"
                 className="object-cover"
+                controls={gallery[img] ? isVideoSrc(gallery[img]) : false}
+                muted
+                autoPlay={gallery[img] ? isVideoSrc(gallery[img]) : false}
+                loop
               />
               <div className="absolute start-3 top-3 flex flex-col gap-1.5">
                 {discount && <DiscountBadge percent={discount} size="md" />}
@@ -176,7 +196,7 @@ export function ProductDetail({
                 </button>
               </div>
               <div className="absolute inset-x-0 bottom-3 flex justify-center gap-1.5">
-                {product.images.map((_, i) => (
+                {gallery.map((_, i) => (
                   <button
                     key={i}
                     type="button"
@@ -185,15 +205,15 @@ export function ProductDetail({
                       "h-2 rounded-full transition-all duration-250",
                       i === img ? "w-6 bg-ink" : "w-2 bg-ink/30 hover:bg-ink/50"
                     )}
-                    aria-label={`صورة ${i + 1}`}
+                    aria-label={`وسائط ${i + 1}`}
                   />
                 ))}
               </div>
             </div>
             <div className="mt-3 flex gap-2.5 overflow-x-auto pb-1">
-              {product.images.map((src, i) => (
+              {gallery.map((src, i) => (
                 <button
-                  key={src + i}
+                  key={src.slice(0, 40) + String(i)}
                   type="button"
                   onClick={() => setImg(i)}
                   className={cn(
@@ -201,7 +221,7 @@ export function ProductDetail({
                     i === img ? "border-ink shadow-sm" : "border-transparent opacity-80 hover:opacity-100"
                   )}
                 >
-                  <Image src={src} alt="" fill className="object-cover" sizes="72px" />
+                  <SafeMedia src={src} alt="" fill className="object-cover" sizes="72px" muted />
                 </button>
               ))}
             </div>
@@ -218,6 +238,9 @@ export function ProductDetail({
               </div>
               <div className="shrink-0 text-start sm:text-end">
                 <p className="price-lg">{formatPriceShort(product.price)}</p>
+                {sarLabel && (
+                  <p className="mt-1 text-xs text-ink-muted">≈ {sarLabel}</p>
+                )}
                 {product.compareAtPrice && (
                   <p className="mt-0.5 text-sm text-ink-light line-through">
                     {formatPriceShort(product.compareAtPrice)}
@@ -259,8 +282,13 @@ export function ProductDetail({
                   <Truck className="h-4 w-4" strokeWidth={1.75} />
                 </span>
                 <div>
-                  <p className="font-semibold text-ink">توصيل داخل اليمن</p>
-                  <p className="text-xs text-ink-muted">٢–٥ أيام عمل · أو استلام من المتجر مجانًا</p>
+                  <p className="font-semibold text-ink">{deliveryCopy.deliveryLabel}</p>
+                  <p className="text-xs text-ink-muted">
+                    {deliveryCopy.deliveryEta}
+                    {deliveryCopy.pickupEnabled
+                      ? ` · أو ${deliveryCopy.pickupLabel}`
+                      : ""}
+                  </p>
                 </div>
               </div>
               <div className="trust-row">

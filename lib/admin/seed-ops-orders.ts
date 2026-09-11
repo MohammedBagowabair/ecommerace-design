@@ -101,7 +101,7 @@ export const adminExtraOrders: Order[] = [
   {
     id: "ORD-2026-00112",
     createdAt: "2026-09-08T07:45:00.000Z",
-    status: "out_for_delivery",
+    status: "preparing",
     customer: { name: "هدى التقارير", phone: "712345678" },
     address: { ...home, id: "addr-huda", phone: "712345678", city: "تعز", governorate: "تعز" },
     deliveryMethodId: "standard",

@@ -8,6 +8,7 @@ import { useAdminDataStore } from "@/lib/store/admin-data";
 import { useAdminAuthStore } from "@/lib/store/admin-auth";
 import { useToastStore } from "@/lib/store/toast";
 import { cn } from "@/lib/utils";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 export function UserForm({
   mode,
@@ -61,6 +62,13 @@ export function UserForm({
         roleId,
         status,
       });
+      logAdminAudit({
+        action: "إنشاء مستخدم",
+        target: name.trim(),
+        entityType: "user",
+        entityId: id,
+        after: `دور: ${roles.find((r) => r.id === roleId)?.name ?? roleId}`,
+      });
       showToast("تم إنشاء المستخدم", "success");
       router.push(`/admin/users/${id}`);
     } else if (user) {
@@ -70,6 +78,15 @@ export function UserForm({
         phone: phone.trim(),
         roleId,
         status,
+      });
+      logAdminAudit({
+        action: "تعديل مستخدم",
+        target: name.trim(),
+        entityType: "user",
+        entityId: user.id,
+        before: user.roleId,
+        after: roleId,
+        meta: `الحالة: ${status}`,
       });
       showToast("تم حفظ التغييرات", "success");
       router.push("/admin/users");
@@ -114,7 +131,7 @@ export function UserForm({
           />
         </label>
         <label className="block">
-          <span className="mb-1.5 block text-xs font-semibold text-ink-muted">الدور</span>
+          <span className="mb-1.5 block text-xs font-semibold text-ink-muted">الدور والصلاحيات</span>
           <select
             className={fieldClass}
             value={roleId}
@@ -123,10 +140,16 @@ export function UserForm({
           >
             {roles.map((r) => (
               <option key={r.id} value={r.id}>
-                {r.name}
+                {r.name} ({r.permissions.length} صلاحية)
               </option>
             ))}
           </select>
+          <p className="mt-1.5 text-[11px] text-ink-muted">
+            يمكن تعديل مصفوفة الصلاحيات من{" "}
+            <Link href="/admin/roles" className="font-semibold text-henna hover:underline">
+              الأدوار والصلاحيات
+            </Link>
+          </p>
         </label>
         <label className="block">
           <span className="mb-1.5 block text-xs font-semibold text-ink-muted">الحالة</span>

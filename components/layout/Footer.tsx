@@ -1,13 +1,37 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { brand, navLinks, categories } from "@/lib/data";
+import { brand, navLinks } from "@/lib/data";
+import { getParentCategories } from "@/lib/data/categories";
+import { useAdminOpsStore } from "@/lib/store/admin-ops";
+import { resolveDeliveryCopy } from "@/lib/delivery-settings";
 
 export function Footer() {
+  const settings = useAdminOpsStore((s) => s.settings);
+  const ensureSeeded = useAdminOpsStore((s) => s.ensureSeeded);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    ensureSeeded();
+    setMounted(true);
+  }, [ensureSeeded]);
+
+  const storeName = mounted && settings.storeName ? settings.storeName : brand.name;
+  const whatsapp = mounted && settings.whatsapp ? settings.whatsapp : "967700000000";
+  const whatsappDisplay =
+    mounted && settings.whatsappDisplay
+      ? settings.whatsappDisplay
+      : "+967 700 000 000";
+  const delivery = resolveDeliveryCopy(mounted ? settings : null);
+  const parents = getParentCategories().slice(0, 5);
+
   return (
     <footer className="mt-20 border-t border-cream-200 bg-white">
       <div className="container-pad grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <Link href="/" className="text-2xl font-bold text-henna">
-            {brand.name}
+            {storeName}
           </Link>
           <p className="mt-3 text-sm leading-relaxed text-ink-muted">
             {brand.tagline}. متجر نسائي فاخر لاستكيرات نقشات الحناء — تصاميم عصرية
@@ -25,28 +49,13 @@ export function Footer() {
                 </Link>
               </li>
             ))}
-            <li>
-              <Link href="/cart" className="transition hover:text-henna">
-                السلة
-              </Link>
-            </li>
-            <li>
-              <Link href="/wishlist" className="transition hover:text-henna">
-                المفضلة
-              </Link>
-            </li>
-            <li>
-              <Link href="/account" className="transition hover:text-henna">
-                حسابي
-              </Link>
-            </li>
           </ul>
         </div>
 
         <div>
           <h3 className="mb-3 text-sm font-bold text-ink">الأقسام</h3>
           <ul className="space-y-2 text-sm text-ink-muted">
-            {categories.slice(0, 6).map((c) => (
+            {parents.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/categories/${c.slug}`}
@@ -63,16 +72,18 @@ export function Footer() {
           <h3 className="mb-3 text-sm font-bold text-ink">معلومات</h3>
           <ul className="space-y-2 text-sm text-ink-muted">
             <li>الدفع: تحويل بنكي</li>
-            <li>التوصيل: مختلف المناطق</li>
+            <li>
+              {delivery.deliveryLabel}: {delivery.deliveryEta}
+            </li>
             <li>
               الدعم:{" "}
               <a
-                href="https://wa.me/967700000000"
+                href={`https://wa.me/${whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-semibold text-henna hover:underline"
               >
-                واتساب +967 700 000 000
+                واتساب {whatsappDisplay}
               </a>
             </li>
             <li className="pt-2 text-xs text-ink-light">
@@ -82,7 +93,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-cream-200 py-4 text-center text-xs text-ink-light">
-        © {new Date().getFullYear()} {brand.name}. جميع الحقوق محفوظة.
+        © {new Date().getFullYear()} {storeName}. جميع الحقوق محفوظة.
       </div>
     </footer>
   );

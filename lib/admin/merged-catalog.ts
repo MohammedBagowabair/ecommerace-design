@@ -6,12 +6,14 @@ import type { Category, Offer, Order, Product } from "../types";
 import type {
   AdminCustomer,
   CategoryOverride,
+  CustomCategory,
   CustomProduct,
   MergedCategory,
   MergedOffer,
   MergedProduct,
   ProductOverride,
 } from "./ops-types";
+import { expandCategoryIds } from "../data/categories";
 
 export function mergeProduct(
   base: Product,
@@ -39,11 +41,21 @@ export function mergeProduct(
     stock,
     stockStatus,
     categoryIds: override.categoryIds ?? base.categoryIds,
+    subcategoryId:
+      override.subcategoryId === null
+        ? undefined
+        : override.subcategoryId !== undefined
+          ? override.subcategoryId
+          : base.subcategoryId,
     badges: override.badges ?? base.badges,
     images:
       override.images && override.images.length > 0
         ? override.images
         : base.images,
+    videos:
+      override.videos !== undefined
+        ? override.videos
+        : base.videos,
     isFeatured: override.isFeatured ?? base.isFeatured,
     isOffer: override.isOffer ?? base.isOffer,
     isNew: override.isNew ?? base.isNew,
@@ -102,20 +114,43 @@ export function mergeCategory(
     description: override?.description ?? base.description,
     slug: override?.slug ?? base.slug,
     image: override?.image ?? base.image,
+    parentId:
+      override?.parentId !== undefined ? override.parentId : base.parentId ?? null,
     productCount: productCount ?? base.productCount,
     isActive: override?.isActive ?? true,
   };
 }
 
+function productTouchesCategory(p: MergedProduct, categoryId: string, all: Category[]): boolean {
+  if (p.categoryIds.includes(categoryId) || p.subcategoryId === categoryId) return true;
+  const expanded = expandCategoryIds([categoryId], all);
+  return p.categoryIds.some((id) => expanded.includes(id));
+}
+
 export function mergeCategories(
   overrides: Record<string, CategoryOverride>,
-  products: MergedProduct[]
+  products: MergedProduct[],
+  customCategories: CustomCategory[] = []
 ): MergedCategory[] {
-  return seedCategories.map((c) => {
+  const customIds = new Set(customCategories.map((c) => c.id));
+  const fromSeed = seedCategories
+    .filter((c) => !customIds.has(c.id))
+    .map((c) => {
+      const mergedBase = mergeCategory(c, overrides[c.id]);
+      return mergedBase;
+    });
+  const fromCustom = customCategories.map((c) => {
+    const { isActive, createdAt: _c, ...rest } = c;
+    void _c;
+    const merged = mergeCategory(rest, overrides[c.id]);
+    return { ...merged, isActive: overrides[c.id]?.isActive ?? isActive };
+  });
+  const all = [...fromCustom, ...fromSeed];
+  return all.map((c) => {
     const count = products.filter(
-      (p) => p.isActive !== false && p.categoryIds.includes(c.id)
+      (p) => p.isActive !== false && productTouchesCategory(p, c.id, all)
     ).length;
-    return mergeCategory(c, overrides[c.id], count);
+    return { ...c, productCount: count };
   });
 }
 

@@ -14,6 +14,23 @@ export function formatPriceShort(amount: number): string {
   return `${amount.toLocaleString("ar-YE")} ر.ي`;
 }
 
+/** Convert YER amount to SAR using yer-per-1-SAR rate */
+export function yerToSar(yerAmount: number, yerPerSar?: number | null): number | null {
+  if (!yerPerSar || yerPerSar <= 0) return null;
+  return yerAmount / yerPerSar;
+}
+
+export function formatSarFromYer(yerAmount: number, yerPerSar?: number | null): string | null {
+  const sar = yerToSar(yerAmount, yerPerSar);
+  if (sar == null) return null;
+  return `${sar.toLocaleString("ar-SA", { maximumFractionDigits: 2 })} ر.س`;
+}
+
+export function formatYerPerSarRate(yerPerSar?: number | null): string {
+  if (!yerPerSar || yerPerSar <= 0) return "غير مضبوط";
+  return `1 ر.س = ${yerPerSar.toLocaleString("ar-YE")} ر.ي`;
+}
+
 export function getDiscountPercent(price: number, compareAt?: number): number | null {
   if (!compareAt || compareAt <= price) return null;
   return Math.round(((compareAt - price) / compareAt) * 100);

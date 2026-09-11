@@ -17,6 +17,9 @@ import {
 } from "@/lib/admin/merged-catalog";
 import { getStockStatus, cn } from "@/lib/utils";
 import type { ProductBadge } from "@/lib/types";
+import { MediaUploader } from "@/components/admin/media/MediaUploader";
+import { isVideoSrc } from "@/lib/media/compress";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 const BADGE_OPTIONS: { id: ProductBadge; label: string }[] = [
   { id: "new", label: "جديد" },
@@ -41,6 +44,7 @@ export default function AdminProductEditPage() {
   const overrides = useAdminOpsStore((s) => s.productOverrides);
   const customProducts = useAdminOpsStore((s) => s.customProducts);
   const catOverrides = useAdminOpsStore((s) => s.categoryOverrides);
+  const customCategories = useAdminOpsStore((s) => s.customCategories);
   const setProductOverride = useAdminOpsStore((s) => s.setProductOverride);
   const clearProductOverride = useAdminOpsStore((s) => s.clearProductOverride);
   const updateCustomProduct = useAdminOpsStore((s) => s.updateCustomProduct);
@@ -67,17 +71,18 @@ export default function AdminProductEditPage() {
   );
   const categories = useMemo(() => {
     const products = mergeProducts(overrides, customProducts);
-    return mergeCategories(catOverrides, products);
-  }, [overrides, customProducts, catOverrides]);
+    return mergeCategories(catOverrides, products, customCategories);
+  }, [overrides, customProducts, catOverrides, customCategories]);
+  const parents = useMemo(() => categories.filter((c) => !c.parentId), [categories]);
 
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState(0);
   const [compareAt, setCompareAt] = useState<string>("");
   const [stock, setStock] = useState(0);
-  const [image1, setImage1] = useState("");
-  const [image2, setImage2] = useState("");
-  const [image3, setImage3] = useState("");
+  const [media, setMedia] = useState<string[]>([]);
+  const [parentCategoryId, setParentCategoryId] = useState("");
+  const [subcategoryId, setSubcategoryId] = useState("");
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [badges, setBadges] = useState<ProductBadge[]>([]);
   const [isFeatured, setIsFeatured] = useState(false);
@@ -100,9 +105,20 @@ export default function AdminProductEditPage() {
       product.compareAtPrice != null ? String(product.compareAtPrice) : ""
     );
     setStock(product.stock);
-    setImage1(product.images[0] ?? "");
-    setImage2(product.images[1] ?? "");
-    setImage3(product.images[2] ?? "");
+    const vids = product.videos ?? [];
+    setMedia([...(product.images ?? []), ...vids]);
+    const parent =
+      product.categoryIds.find((cid) =>
+        categories.some((c) => c.id === cid && !c.parentId)
+      ) || "";
+    const sub =
+      product.subcategoryId ||
+      product.categoryIds.find((cid) =>
+        categories.some((c) => c.id === cid && c.parentId)
+      ) ||
+      "";
+    setParentCategoryId(parent);
+    setSubcategoryId(sub);
     setCategoryIds([...product.categoryIds]);
     setBadges([...product.badges]);
     setIsFeatured(!!product.isFeatured);
@@ -111,7 +127,7 @@ export default function AdminProductEditPage() {
     setIsBestseller(!!product.isBestseller);
     setIsActive(product.isActive !== false);
     setReady(true);
-  }, [product, hydrated]);
+  }, [product, hydrated, categories]);
 
   if (!canView) {
     return (
@@ -142,11 +158,6 @@ export default function AdminProductEditPage() {
     );
   }
 
-  const toggleCat = (cid: string) => {
-    setCategoryIds((prev) =>
-      prev.includes(cid) ? prev.filter((x) => x !== cid) : [...prev, cid]
-    );
-  };
 
   const toggleBadge = (b: ProductBadge) => {
     setBadges((prev) =>
@@ -161,7 +172,9 @@ export default function AdminProductEditPage() {
       return;
     }
     const compareNum = compareAt.trim() === "" ? null : Number(compareAt);
-    const images = [image1, image2, image3].map((s) => s.trim()).filter(Boolean);
+    const images = media.filter((m) => m && !isVideoSrc(m));
+    const videos = media.filter((m) => m && isVideoSrc(m));
+    const cats = [parentCategoryId, subcategoryId].filter(Boolean);
     const patch = {
       name: name.trim() || product.name,
       description: description.trim(),
@@ -174,9 +187,11 @@ export default function AdminProductEditPage() {
             : product.compareAtPrice ?? null,
       stock,
       stockStatus: getStockStatus(stock),
-      categoryIds,
+      categoryIds: cats.length ? cats : categoryIds,
+      subcategoryId: subcategoryId || null,
       badges,
       images: images.length ? images : product.images,
+      videos,
       isFeatured,
       isOffer,
       isNew,
@@ -188,6 +203,7 @@ export default function AdminProductEditPage() {
         ...patch,
         compareAtPrice:
           patch.compareAtPrice === null ? undefined : patch.compareAtPrice ?? undefined,
+        subcategoryId: patch.subcategoryId || undefined,
         isActive,
       });
     }
@@ -196,7 +212,25 @@ export default function AdminProductEditPage() {
       actorName: session?.name ?? "مشرف",
       action: "تعديل منتج",
       target: patch.name,
+      entityType: "product",
+      entityId: id,
     });
+    logAdminAudit({
+      action: "تعديل منتج",
+      target: patch.name,
+      entityType: "product",
+      entityId: id,
+      after: isActive ? "نشط" : "معطّل",
+    });
+    if (videos.length) {
+      logAdminAudit({
+        action: "رفع وسائط منتج",
+        target: patch.name,
+        entityType: "media",
+        entityId: id,
+        after: `${videos.length} فيديو`,
+      });
+    }
     showToast("تم حفظ تعديلات المنتج (محليًا)", "success");
     router.push("/admin/products");
   };
@@ -283,50 +317,52 @@ export default function AdminProductEditPage() {
           </label>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-sm font-semibold text-ink">روابط الصور</p>
-          {[
-            [image1, setImage1, "1"],
-            [image2, setImage2, "2"],
-            [image3, setImage3, "3"],
-          ].map(([val, setter, label]) => (
-            <label key={String(label)} className="block text-sm">
-              <span className="mb-1 block text-xs text-ink-muted">صورة {String(label)}</span>
-              <input
-                className="input-pill"
-                dir="ltr"
-                value={val as string}
-                disabled={!canManage}
-                onChange={(e) => (setter as (v: string) => void)(e.target.value)}
-              />
-            </label>
-          ))}
-        </div>
+        <MediaUploader
+          label="صور وفيديو المنتج"
+          values={media}
+          onChange={setMedia}
+          max={6}
+          disabled={!canManage}
+        />
 
-        <div>
-          <p className="mb-2 text-sm font-semibold text-ink">الأقسام</p>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((c) => {
-              const on = categoryIds.includes(c.id);
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  disabled={!canManage}
-                  onClick={() => toggleCat(c.id)}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-xs font-semibold",
-                    on
-                      ? "border-henna bg-henna-50 text-henna"
-                      : "border-cream-300 bg-white text-ink-muted",
-                    !canManage && "opacity-60"
-                  )}
-                >
+        <div className="grid gap-3 sm:grid-cols-2">
+          <label className="block text-sm">
+            <span className="mb-1 block font-semibold text-ink">القسم الرئيسي</span>
+            <select
+              className="input-pill"
+              value={parentCategoryId}
+              disabled={!canManage}
+              onChange={(e) => {
+                setParentCategoryId(e.target.value);
+                setSubcategoryId("");
+              }}
+            >
+              <option value="">— اختاري —</option>
+              {parents.map((c) => (
+                <option key={c.id} value={c.id}>
                   {c.name}
-                </button>
-              );
-            })}
-          </div>
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block text-sm">
+            <span className="mb-1 block font-semibold text-ink">القسم الفرعي</span>
+            <select
+              className="input-pill"
+              value={subcategoryId}
+              disabled={!canManage || !parentCategoryId}
+              onChange={(e) => setSubcategoryId(e.target.value)}
+            >
+              <option value="">— اختياري —</option>
+              {categories
+                .filter((c) => c.parentId === parentCategoryId)
+                .map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+            </select>
+          </label>
         </div>
 
         <div>

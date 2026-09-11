@@ -9,6 +9,8 @@ export interface Category {
   description: string;
   image: string;
   productCount: number;
+  /** Parent category id; null/undefined = top-level */
+  parentId?: string | null;
 }
 
 export interface Product {
@@ -20,7 +22,11 @@ export interface Product {
   price: number;
   compareAtPrice?: number;
   categoryIds: string[];
+  /** Optional primary subcategory (also listed in categoryIds when set) */
+  subcategoryId?: string;
   images: string[];
+  /** Optional product videos (URLs or data URLs) shown in PDP gallery */
+  videos?: string[];
   badges: ProductBadge[];
   rating: number;
   reviewCount: number;
@@ -97,6 +103,8 @@ export type SortOption =
 
 export interface ProductFilters {
   categories: string[];
+  /** Subcategory slugs or ids */
+  subcategories: string[];
   patternTypes: string[];
   occasions: string[];
   priceMin?: number;
@@ -113,14 +121,12 @@ export type DeliveryMethodId = "standard" | "pickup";
 
 export type PaymentMethodId = "bank_transfer";
 
-/** Full fulfillment + payment journey (mock) */
+/** Simplified 5-step fulfillment + payment journey (mock) */
 export type OrderStatus =
   | "pending_payment"
   | "payment_review"
   | "payment_confirmed"
   | "preparing"
-  | "ready_for_delivery"
-  | "out_for_delivery"
   | "delivered"
   | "cancelled";
 

@@ -45,8 +45,13 @@ export function Navbar() {
     if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
     };
   }, [open]);
 
@@ -144,37 +149,84 @@ export function Navbar() {
         </div>
       </div>
 
-      {open && (
-        <div className="max-h-[min(75vh,32rem)] overflow-y-auto border-t border-cream-200 bg-white lg:hidden animate-fadeIn">
-          <nav className="container-pad flex flex-col gap-1 py-4" aria-label="القائمة الرئيسية">
-            {navLinks.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={cn(
-                  "rounded-2xl px-4 py-3.5 text-sm font-semibold transition",
-                  pathname === l.href
-                    ? "bg-henna-50 text-henna"
-                    : "text-ink hover:bg-cream-100"
-                )}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <div className="my-2 border-t border-cream-100" />
+      {/* Mobile side drawer — from RTL start edge (right) */}
+      <div
+        className={cn(
+          "fixed inset-0 z-[70] lg:hidden",
+          open ? "pointer-events-auto" : "pointer-events-none"
+        )}
+        aria-hidden={!open}
+      >
+        <button
+          type="button"
+          aria-label="إغلاق القائمة"
+          className={cn(
+            "absolute inset-0 bg-ink/40 transition-opacity duration-300",
+            open ? "opacity-100" : "opacity-0"
+          )}
+          onClick={() => setOpen(false)}
+        />
+        <aside
+          className={cn(
+            "absolute inset-y-0 start-0 flex w-[min(20rem,88vw)] flex-col bg-white shadow-xl transition-transform duration-300 ease-out",
+            open
+              ? "translate-x-0"
+              : "ltr:-translate-x-full rtl:translate-x-full"
+          )}
+          role="dialog"
+          aria-modal="true"
+          aria-label="القائمة الرئيسية"
+        >
+          <div className="flex h-14 items-center justify-between border-b border-cream-200 px-4">
+            <Link
+              href="/"
+              className="text-lg font-bold text-henna"
+              onClick={() => setOpen(false)}
+            >
+              {brand.name}
+            </Link>
+            <button
+              type="button"
+              aria-label="إغلاق القائمة"
+              onClick={() => setOpen(false)}
+              className="flex h-10 w-10 items-center justify-center rounded-full text-ink hover:bg-cream-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="القائمة الرئيسية">
+            <div className="flex flex-col gap-1">
+              {navLinks.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "rounded-2xl px-4 py-3.5 text-sm font-semibold transition",
+                    pathname === l.href
+                      ? "bg-henna-50 text-henna"
+                      : "text-ink hover:bg-cream-100"
+                  )}
+                >
+                  {l.label}
+                </Link>
+              ))}
+            </div>
+            <div className="my-3 border-t border-cream-100" />
             <button
               type="button"
               onClick={() => {
                 setOpen(false);
                 openSearch();
               }}
-              className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-start text-sm font-semibold text-ink hover:bg-cream-100"
+              className="flex w-full items-center gap-3 rounded-2xl px-4 py-3.5 text-start text-sm font-semibold text-ink hover:bg-cream-100"
             >
               <Search className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
               البحث
             </button>
             <Link
               href="/wishlist"
+              onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
             >
               <span className="flex items-center gap-3">
@@ -189,6 +241,7 @@ export function Navbar() {
             </Link>
             <Link
               href="/cart"
+              onClick={() => setOpen(false)}
               className="flex items-center justify-between rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
             >
               <span className="flex items-center gap-3">
@@ -203,14 +256,15 @@ export function Navbar() {
             </Link>
             <Link
               href="/account"
+              onClick={() => setOpen(false)}
               className="flex items-center gap-3 rounded-2xl px-4 py-3.5 text-sm font-semibold text-ink hover:bg-cream-100"
             >
               <User className="h-4 w-4 text-ink-muted" strokeWidth={1.75} />
               حسابي
             </Link>
           </nav>
-        </div>
-      )}
+        </aside>
+      </div>
     </header>
   );
 }

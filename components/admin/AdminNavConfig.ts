@@ -75,7 +75,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
   },
   {
     href: "/admin/activity",
-    label: "سجل النشاط",
+    label: "سجل التدقيق",
     icon: ScrollText,
     permissions: ["dashboard.view"],
   },

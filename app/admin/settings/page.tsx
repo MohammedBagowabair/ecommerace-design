@@ -9,6 +9,8 @@ import { useAdminAuthStore } from "@/lib/store/admin-auth";
 import { useAdminOpsStore } from "@/lib/store/admin-ops";
 import { useToastStore } from "@/lib/store/toast";
 import type { BankAccount } from "@/lib/types";
+import { formatYerPerSarRate } from "@/lib/utils";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 export default function AdminSettingsPage() {
   const canManage = useAdminAuthStore((s) =>
@@ -24,6 +26,14 @@ export default function AdminSettingsPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [whatsappDisplay, setWhatsappDisplay] = useState("");
   const [banks, setBanks] = useState<BankAccount[]>([]);
+  const [yerPerSar, setYerPerSar] = useState("150");
+  const [deliveryMinDays, setDeliveryMinDays] = useState("2");
+  const [deliveryMaxDays, setDeliveryMaxDays] = useState("5");
+  const [deliveryLabel, setDeliveryLabel] = useState("");
+  const [deliveryText, setDeliveryText] = useState("");
+  const [pickupEnabled, setPickupEnabled] = useState(true);
+  const [pickupLabel, setPickupLabel] = useState("");
+  const [pickupText, setPickupText] = useState("");
   const [ready, setReady] = useState(false);
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -36,6 +46,18 @@ export default function AdminSettingsPage() {
     setWhatsapp(settings.whatsapp);
     setWhatsappDisplay(settings.whatsappDisplay);
     setBanks(settings.bankAccounts.map((b) => ({ ...b })));
+    setYerPerSar(
+      settings.yerPerSar && settings.yerPerSar > 0
+        ? String(settings.yerPerSar)
+        : "150"
+    );
+    setDeliveryMinDays(String(settings.deliveryMinDays ?? 2));
+    setDeliveryMaxDays(String(settings.deliveryMaxDays ?? 5));
+    setDeliveryLabel(settings.deliveryLabel ?? "");
+    setDeliveryText(settings.deliveryText ?? "");
+    setPickupEnabled(settings.pickupEnabled !== false);
+    setPickupLabel(settings.pickupLabel ?? "");
+    setPickupText(settings.pickupText ?? "");
     setReady(true);
   }, [settings]);
 
@@ -97,11 +119,43 @@ export default function AdminSettingsPage() {
         return;
       }
     }
+    const rate = Number(yerPerSar);
+    if (!Number.isFinite(rate) || rate <= 0) {
+      showToast("أدخلي سعر صرف صالح (ر.ي لكل 1 ر.س)", "error");
+      return;
+    }
+    const minD = Number(deliveryMinDays);
+    const maxD = Number(deliveryMaxDays);
+    if (!Number.isFinite(minD) || minD < 1) {
+      showToast("حدّدي الحد الأدنى لأيام التوصيل", "error");
+      return;
+    }
+    if (!Number.isFinite(maxD) || maxD < minD) {
+      showToast("الحد الأقصى يجب أن يكون ≥ الحد الأدنى", "error");
+      return;
+    }
+    const before = `أيام ${settings.deliveryMinDays ?? "?"}–${settings.deliveryMaxDays ?? "?"} · صرف ${settings.yerPerSar ?? "?"}`;
     updateSettings({
       storeName: storeName.trim() || settings.storeName,
       whatsapp: whatsapp.trim(),
       whatsappDisplay: whatsappDisplay.trim(),
       bankAccounts: banks,
+      yerPerSar: rate,
+      deliveryMinDays: minD,
+      deliveryMaxDays: maxD,
+      deliveryLabel: deliveryLabel.trim() || undefined,
+      deliveryText: deliveryText.trim() || undefined,
+      pickupEnabled,
+      pickupLabel: pickupLabel.trim() || undefined,
+      pickupText: pickupText.trim() || undefined,
+    });
+    logAdminAudit({
+      action: "تعديل إعدادات المتجر",
+      target: "إعدادات المتجر",
+      entityType: "settings",
+      entityId: "store-settings",
+      before,
+      after: `أيام ${minD}–${maxD} · صرف ${rate}`,
     });
     showToast("تم حفظ إعدادات المتجر (محليًا)", "success");
   };
@@ -110,7 +164,7 @@ export default function AdminSettingsPage() {
     <AdminShell title="الإعدادات">
       <AdminPageHeader
         title="الإعدادات"
-        description="اسم المتجر، واتساب، والحسابات البنكية (وهمي محلي)"
+        description="اسم المتجر، واتساب، سعر الصرف ر.س/ر.ي، والحسابات البنكية (وهمي محلي)"
         breadcrumbs={[{ label: "الإعدادات" }]}
       />
       <div className="mx-auto max-w-2xl space-y-5">
@@ -148,6 +202,114 @@ export default function AdminSettingsPage() {
               />
             </label>
           </div>
+        </section>
+
+        <section className="rounded-2xl border border-cream-300 bg-white p-4 shadow-card sm:p-6">
+          <h2 className="mb-1 text-sm font-bold text-ink">سعر الصرف ر.س ↔ ر.ي</h2>
+          <p className="mb-4 text-xs text-ink-muted">
+            حدّدي كم ريال يمني يساوي ريالًا سعوديًا واحدًا. يُحفظ في
+            localStorage (`naqshat-admin-ops`) ويُعرض اختياريًا في المتجر.
+          </p>
+          <label className="block text-sm">
+            <span className="mb-1 block font-semibold">كم ر.ي لكل 1 ر.س؟</span>
+            <input
+              type="number"
+              min={1}
+              step="0.01"
+              className="input-pill"
+              dir="ltr"
+              value={yerPerSar}
+              onChange={(e) => setYerPerSar(e.target.value)}
+            />
+          </label>
+          <div className="mt-3 rounded-xl bg-cream-50 px-3 py-2.5 text-sm text-ink">
+            <p className="font-semibold">
+              {formatYerPerSarRate(Number(yerPerSar) || undefined)}
+            </p>
+            {Number(yerPerSar) > 0 && (
+              <p className="mt-1 text-xs text-ink-muted" dir="ltr">
+                العكس التقريبي: 1 ر.ي ≈{" "}
+                {(1 / Number(yerPerSar)).toLocaleString("ar-SA", {
+                  maximumFractionDigits: 4,
+                })}{" "}
+                ر.س
+              </p>
+            )}
+          </div>
+        </section>
+
+        <section className="rounded-2xl border border-cream-300 bg-white p-4 shadow-card sm:p-6">
+          <h2 className="mb-1 text-sm font-bold text-ink">التوصيل والاستلام</h2>
+          <p className="mb-4 text-xs text-ink-muted">
+            تظهر هذه النصوص في صفحة المنتج وخيارات الدفع عند إتمام الطلب — بدون نصوص ثابتة في الواجهة.
+          </p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="block text-sm">
+              <span className="mb-1 block font-semibold">أقل أيام عمل</span>
+              <input
+                type="number"
+                min={1}
+                className="input-pill"
+                value={deliveryMinDays}
+                onChange={(e) => setDeliveryMinDays(e.target.value)}
+              />
+            </label>
+            <label className="block text-sm">
+              <span className="mb-1 block font-semibold">أكثر أيام عمل</span>
+              <input
+                type="number"
+                min={1}
+                className="input-pill"
+                value={deliveryMaxDays}
+                onChange={(e) => setDeliveryMaxDays(e.target.value)}
+              />
+            </label>
+          </div>
+          <label className="mt-3 block text-sm">
+            <span className="mb-1 block font-semibold">عنوان التوصيل (قصير)</span>
+            <input
+              className="input-pill"
+              value={deliveryLabel}
+              placeholder="مثال: التوصيل إلى عنوانك"
+              onChange={(e) => setDeliveryLabel(e.target.value)}
+            />
+          </label>
+          <label className="mt-3 block text-sm">
+            <span className="mb-1 block font-semibold">نص توضيحي للتوصيل</span>
+            <textarea
+              className="w-full rounded-xl border border-cream-300 px-3 py-2.5 text-sm"
+              rows={2}
+              value={deliveryText}
+              placeholder="يظهر تحت العنوان في صفحة المنتج"
+              onChange={(e) => setDeliveryText(e.target.value)}
+            />
+          </label>
+          <label className="mt-3 flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              checked={pickupEnabled}
+              onChange={(e) => setPickupEnabled(e.target.checked)}
+            />
+            تفعيل الاستلام من المتجر (مجاني)
+          </label>
+          <label className="mt-3 block text-sm">
+            <span className="mb-1 block font-semibold">عنوان الاستلام</span>
+            <input
+              className="input-pill"
+              value={pickupLabel}
+              disabled={!pickupEnabled}
+              onChange={(e) => setPickupLabel(e.target.value)}
+            />
+          </label>
+          <label className="mt-3 block text-sm">
+            <span className="mb-1 block font-semibold">نص الاستلام / المدة</span>
+            <input
+              className="input-pill"
+              value={pickupText}
+              disabled={!pickupEnabled}
+              onChange={(e) => setPickupText(e.target.value)}
+            />
+          </label>
         </section>
 
         <section className="rounded-2xl border border-cream-300 bg-white p-4 shadow-card sm:p-6">
@@ -228,12 +390,19 @@ export default function AdminSettingsPage() {
       <ConfirmDialog
         open={confirmReset}
         title="إعادة الإعدادات؟"
-        description="ستُستعاد قيم المتجر والواتساب والحسابات البنكية الافتراضية."
+        description="ستُستعاد قيم المتجر والواتساب وسعر الصرف والحسابات البنكية الافتراضية."
         confirmLabel="إعادة"
         tone="danger"
         onCancel={() => setConfirmReset(false)}
         onConfirm={() => {
           resetSettings();
+          logAdminAudit({
+            action: "إعادة إعدادات المتجر",
+            target: "إعدادات المتجر",
+            entityType: "settings",
+            entityId: "store-settings",
+            after: "افتراضي",
+          });
           setConfirmReset(false);
           showToast("تمت إعادة الإعدادات الافتراضية", "info");
         }}

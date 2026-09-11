@@ -15,6 +15,7 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useAdminAuthStore } from "@/lib/store/admin-auth";
 import { useAdminOpsStore } from "@/lib/store/admin-ops";
 import { useToastStore } from "@/lib/store/toast";
+import { logAdminAudit } from "@/lib/admin/audit";
 import { useAdminOrders } from "@/lib/admin/use-admin-orders";
 import {
   ORDER_STATUS_LABELS,
@@ -126,7 +127,15 @@ export default function AdminOrdersPage() {
       actorName: session?.name ?? "مشرف",
       action: "تحديث حالة طلبات بالجملة",
       target: `${selected.length} طلب`,
+      entityType: "order",
+      after: ORDER_STATUS_LABELS[bulkStatus],
       meta: ORDER_STATUS_LABELS[bulkStatus],
+    });
+    logAdminAudit({
+      action: "تحديث حالة طلبات بالجملة",
+      target: `${selected.length} طلب`,
+      entityType: "order",
+      after: ORDER_STATUS_LABELS[bulkStatus],
     });
     showToast(`تم تحديث ${selected.length} طلب`, "success");
     setSelected([]);

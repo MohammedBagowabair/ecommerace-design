@@ -33,6 +33,7 @@ function AdminProductsPageInner() {
   const overrides = useAdminOpsStore((s) => s.productOverrides);
   const customProducts = useAdminOpsStore((s) => s.customProducts);
   const catOverrides = useAdminOpsStore((s) => s.categoryOverrides);
+  const customCategories = useAdminOpsStore((s) => s.customCategories);
   const ensureSeeded = useAdminOpsStore((s) => s.ensureSeeded);
   const bulkSet = useAdminOpsStore((s) => s.bulkSetProductActive);
   const addActivity = useAdminOpsStore((s) => s.addActivity);
@@ -62,8 +63,8 @@ function AdminProductsPageInner() {
     [overrides, customProducts]
   );
   const categories = useMemo(
-    () => mergeCategories(catOverrides, products),
-    [catOverrides, products]
+    () => mergeCategories(catOverrides, products, customCategories),
+    [catOverrides, products, customCategories]
   );
 
   const filtered = useMemo(() => {
@@ -130,7 +131,7 @@ function AdminProductsPageInner() {
     <AdminShell title="المنتجات">
       <AdminPageHeader
         title="المنتجات"
-        description="إدارة المخزون والأسعار والصور — تجاوزات محلية فقط"
+        description="التجاوزات والمنتجات المخصّصة تُدمج في قوائم المتجر محليًا (localStorage). صفحات التفاصيل الثابتة ما زالت تعتمد على الكتالوج الأساسي."
         breadcrumbs={[{ label: "المنتجات" }]}
         actions={
           canManage ? (

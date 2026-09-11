@@ -12,6 +12,9 @@ import { useToastStore } from "@/lib/store/toast";
 import { mergeCategories, mergeProducts, slugifyArabic } from "@/lib/admin/merged-catalog";
 import { getStockStatus, cn } from "@/lib/utils";
 import type { ProductBadge } from "@/lib/types";
+import { MediaUploader } from "@/components/admin/media/MediaUploader";
+import { isVideoSrc } from "@/lib/media/compress";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 const BADGE_OPTIONS: { id: ProductBadge; label: string }[] = [
   { id: "new", label: "جديد" },
@@ -30,6 +33,7 @@ export default function AdminProductNewPage() {
   const overrides = useAdminOpsStore((s) => s.productOverrides);
   const customProducts = useAdminOpsStore((s) => s.customProducts);
   const catOverrides = useAdminOpsStore((s) => s.categoryOverrides);
+  const customCategories = useAdminOpsStore((s) => s.customCategories);
   const addCustomProduct = useAdminOpsStore((s) => s.addCustomProduct);
   const addActivity = useAdminOpsStore((s) => s.addActivity);
   const ensureSeeded = useAdminOpsStore((s) => s.ensureSeeded);
@@ -41,11 +45,11 @@ export default function AdminProductNewPage() {
   const [compareAt, setCompareAt] = useState("");
   const [stock, setStock] = useState(10);
   const [sku, setSku] = useState("");
-  const [image1, setImage1] = useState(
-    "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80"
-  );
-  const [image2, setImage2] = useState("");
-  const [categoryIds, setCategoryIds] = useState<string[]>([]);
+  const [media, setMedia] = useState<string[]>([
+    "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80",
+  ]);
+  const [parentCategoryId, setParentCategoryId] = useState("");
+  const [subcategoryId, setSubcategoryId] = useState("");
   const [badges, setBadges] = useState<ProductBadge[]>(["new"]);
   const [isFeatured, setIsFeatured] = useState(false);
   const [isOffer, setIsOffer] = useState(false);
@@ -57,8 +61,16 @@ export default function AdminProductNewPage() {
 
   const categories = useMemo(() => {
     const products = mergeProducts(overrides, customProducts);
-    return mergeCategories(catOverrides, products);
-  }, [overrides, customProducts, catOverrides]);
+    return mergeCategories(catOverrides, products, customCategories);
+  }, [overrides, customProducts, catOverrides, customCategories]);
+  const parents = useMemo(() => categories.filter((c) => !c.parentId), [categories]);
+  const subcats = useMemo(
+    () =>
+      parentCategoryId
+        ? categories.filter((c) => c.parentId === parentCategoryId)
+        : [],
+    [categories, parentCategoryId]
+  );
 
   if (!canManage) {
     return (
@@ -68,11 +80,6 @@ export default function AdminProductNewPage() {
     );
   }
 
-  const toggleCat = (cid: string) => {
-    setCategoryIds((prev) =>
-      prev.includes(cid) ? prev.filter((x) => x !== cid) : [...prev, cid]
-    );
-  };
 
   const toggleBadge = (b: ProductBadge) => {
     setBadges((prev) =>
@@ -85,14 +92,17 @@ export default function AdminProductNewPage() {
     if (!name.trim()) errs.push("الاسم مطلوب");
     if (!Number.isFinite(price) || price <= 0) errs.push("السعر يجب أن يكون أكبر من صفر");
     if (stock < 0) errs.push("المخزون لا يمكن أن يكون سالبًا");
-    if (!image1.trim()) errs.push("رابط الصورة الأولى مطلوب");
+    const images = media.filter((m) => m && !isVideoSrc(m));
+    const videos = media.filter((m) => m && isVideoSrc(m));
+    if (!images.length) errs.push("أضيفي صورة واحدةحدة على الأقل");
     if (errs.length) {
       setErrors(errs);
       showToast(errs[0], "error");
       return;
     }
     setErrors([]);
-    const images = [image1.trim(), image2.trim()].filter(Boolean);
+    const cats = [parentCategoryId, subcategoryId].filter(Boolean);
+    const finalCats = cats;
     const compareNum = compareAt.trim() === "" ? undefined : Number(compareAt);
     const product = blankCustomProduct({
       name: name.trim(),
@@ -106,9 +116,11 @@ export default function AdminProductNewPage() {
       stockStatus: getStockStatus(stock),
       sku: sku.trim() || undefined,
       slug: slugifyArabic(name),
-      categoryIds,
+      categoryIds: finalCats,
+      subcategoryId: subcategoryId || undefined,
       badges,
       images,
+      videos: videos.length ? videos : undefined,
       isFeatured,
       isOffer,
       isNew: true,
@@ -118,7 +130,16 @@ export default function AdminProductNewPage() {
       actorName: session?.name ?? "مشرف",
       action: "إنشاء منتج",
       target: product.name,
+      entityType: "product",
+      entityId: id,
       meta: id,
+    });
+    logAdminAudit({
+      action: videos.length ? "رفع وسائط منتج" : "إنشاء منتج",
+      target: name.trim(),
+      entityType: videos.length ? "media" : "product",
+      entityId: id,
+      after: videos.length ? "مع فيديو" : `${images.length} صور`,
     });
     showToast("تم إنشاء المنتج (محليًا في لوحة الإدارة)", "success");
     router.push(`/admin/products/${id}`);
@@ -206,50 +227,51 @@ export default function AdminProductNewPage() {
           />
         </label>
 
-        <div className="space-y-2">
+        <MediaUploader
+          label="صور وفيديو المنتج"
+          values={media}
+          onChange={setMedia}
+          max={6}
+        />
+
+        <div className="grid gap-3 sm:grid-cols-2">
           <label className="block text-sm">
-            <span className="mb-1 block font-semibold text-ink">رابط الصورة 1 *</span>
-            <input
+            <span className="mb-1 block font-semibold text-ink">القسم الرئيسي</span>
+            <select
               className="input-pill"
-              dir="ltr"
-              value={image1}
-              onChange={(e) => setImage1(e.target.value)}
-            />
+              value={parentCategoryId}
+              onChange={(e) => {
+                setParentCategoryId(e.target.value);
+                setSubcategoryId("");
+              }}
+            >
+              <option value="">— اختاري —</option>
+              {parents.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="block text-sm">
-            <span className="mb-1 block font-semibold text-ink">رابط الصورة 2</span>
-            <input
+            <span className="mb-1 block font-semibold text-ink">القسم الفرعي</span>
+            <select
               className="input-pill"
-              dir="ltr"
-              value={image2}
-              onChange={(e) => setImage2(e.target.value)}
-            />
+              value={subcategoryId}
+              disabled={!parentCategoryId || !subcats.length}
+              onChange={(e) => setSubcategoryId(e.target.value)}
+            >
+              <option value="">— اختياري —</option>
+              {subcats.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
 
-        <div>
-          <p className="mb-2 text-sm font-semibold text-ink">الأقسام</p>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((c) => {
-              const on = categoryIds.includes(c.id);
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => toggleCat(c.id)}
-                  className={cn(
-                    "rounded-full border px-3 py-1.5 text-xs font-semibold",
-                    on
-                      ? "border-henna bg-henna-50 text-henna"
-                      : "border-cream-300 bg-white text-ink-muted"
-                  )}
-                >
-                  {c.name}
-                </button>
-              );
-            })}
-          </div>
-        </div>
+
 
         <div>
           <p className="mb-2 text-sm font-semibold text-ink">الشارات</p>

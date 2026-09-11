@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { AdminShell } from "@/components/admin/AdminShell";
 import {
+  ALL_PERMISSIONS,
   PERMISSION_GROUPS,
   PERMISSION_LABELS,
 } from "@/lib/admin/permissions";
@@ -13,6 +14,7 @@ import { useAdminDataStore } from "@/lib/store/admin-data";
 import { useAdminAuthStore } from "@/lib/store/admin-auth";
 import { useToastStore } from "@/lib/store/toast";
 import { cn } from "@/lib/utils";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 export default function EditRolePage() {
   const params = useParams();
@@ -46,10 +48,25 @@ export default function EditRolePage() {
     );
   }
 
+  function toggleGroup(groupPerms: Permission[], on: boolean) {
+    setPerms((prev) => {
+      const without = prev.filter((p) => !groupPerms.includes(p));
+      return on ? [...without, ...groupPerms] : without;
+    });
+  }
+
   function onSubmit(e: FormEvent) {
     e.preventDefault();
     if (!canManage || !role) return;
     updateRole(role.id, { name: name.trim(), description: description.trim(), permissions: perms });
+    logAdminAudit({
+      action: "تعديل صلاحيات دور",
+      target: name.trim() || role.name,
+      entityType: "role",
+      entityId: role.id,
+      before: `${role.permissions.length} صلاحية`,
+      after: `${perms.length} صلاحية`,
+    });
     showToast("تم حفظ صلاحيات الدور", "success");
     router.push("/admin/roles");
   }
@@ -102,13 +119,52 @@ export default function EditRolePage() {
         </div>
 
         <div className="rounded-2xl border border-cream-300 bg-white p-5 shadow-card">
-          <h2 className="mb-4 text-sm font-bold text-ink">مصفوفة الصلاحيات</h2>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <h2 className="text-sm font-bold text-ink">مصفوفة الصلاحيات</h2>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <button
+                type="button"
+                className="rounded-lg border border-cream-300 px-2.5 py-1 font-semibold hover:bg-cream-50"
+                onClick={() => setPerms([...ALL_PERMISSIONS])}
+              >
+                تحديد الكل
+              </button>
+              <button
+                type="button"
+                className="rounded-lg border border-cream-300 px-2.5 py-1 font-semibold hover:bg-cream-50"
+                onClick={() => setPerms([])}
+              >
+                إلغاء الكل
+              </button>
+              <span className="rounded-lg bg-henna-50 px-2.5 py-1 font-bold text-henna">
+                {perms.length}/{ALL_PERMISSIONS.length}
+              </span>
+            </div>
+          </div>
           <div className="space-y-5">
             {PERMISSION_GROUPS.map((group) => (
               <div key={group.title}>
-                <h3 className="mb-2 text-xs font-bold uppercase tracking-wide text-ink-muted">
-                  {group.title}
-                </h3>
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h3 className="text-xs font-bold tracking-wide text-ink-muted">
+                    {group.title}
+                  </h3>
+                  <div className="flex gap-2 text-[10px]">
+                    <button
+                      type="button"
+                      className="font-semibold text-henna hover:underline"
+                      onClick={() => toggleGroup(group.permissions, true)}
+                    >
+                      الكل
+                    </button>
+                    <button
+                      type="button"
+                      className="font-semibold text-ink-muted hover:underline"
+                      onClick={() => toggleGroup(group.permissions, false)}
+                    >
+                      لا شيء
+                    </button>
+                  </div>
+                </div>
                 <div className="grid gap-2 sm:grid-cols-2">
                   {group.permissions.map((p) => {
                     const checked = perms.includes(p);

@@ -18,12 +18,13 @@ import { useToastStore } from "@/lib/store/toast";
 import { getProductById } from "@/lib/data/products";
 import {
   addressLabelText,
-  bankAccounts,
+  bankAccounts as seedBanks,
   bankTransferNote,
-  deliveryOptions,
-  storeContact,
+  storeContact as seedContact,
   yemenGovernorates,
 } from "@/lib/data/checkout";
+import { useAdminOpsStore } from "@/lib/store/admin-ops";
+import { buildDeliveryOptions } from "@/lib/delivery-settings";
 import type {
   Address,
   AddressLabel,
@@ -95,6 +96,23 @@ export function CheckoutFlow() {
   const showToast = useToastStore((s) => s.show);
   const profile = useCustomerStore((s) => s.profile);
   const savedAddresses = useCustomerStore((s) => s.addresses);
+  const settings = useAdminOpsStore((s) => s.settings);
+  const ensureOps = useAdminOpsStore((s) => s.ensureSeeded);
+
+  useEffect(() => {
+    ensureOps();
+  }, [ensureOps]);
+
+  const deliveryOptions = useMemo(
+    () => buildDeliveryOptions(settings),
+    [settings]
+  );
+  const bankAccounts =
+    settings.bankAccounts?.length > 0 ? settings.bankAccounts : seedBanks;
+  const storeContact = {
+    whatsapp: settings.whatsapp || seedContact.whatsapp,
+    whatsappDisplay: settings.whatsappDisplay || seedContact.whatsappDisplay,
+  };
 
   const [mounted, setMounted] = useState(false);
   const [step, setStep] = useState<CheckoutStepId | "success">("customer");
@@ -105,9 +123,21 @@ export function CheckoutFlow() {
   const [newAddress, setNewAddress] = useState(emptyAddress);
   const [addressErrors, setAddressErrors] = useState<Record<string, string>>({});
   const [deliveryId, setDeliveryId] = useState<DeliveryMethodId>("standard");
-  const [selectedBankId, setSelectedBankId] = useState(bankAccounts[0].id);
+  const [selectedBankId, setSelectedBankId] = useState(seedBanks[0].id);
   const [placedOrder, setPlacedOrder] = useState<Order | null>(null);
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (!deliveryOptions.some((d) => d.id === deliveryId)) {
+      setDeliveryId((deliveryOptions[0]?.id as DeliveryMethodId) ?? "standard");
+    }
+  }, [deliveryOptions, deliveryId]);
+
+  useEffect(() => {
+    if (bankAccounts.length && !bankAccounts.some((b) => b.id === selectedBankId)) {
+      setSelectedBankId(bankAccounts[0].id);
+    }
+  }, [bankAccounts, selectedBankId]);
 
   useEffect(() => {
     setMounted(true);
@@ -146,7 +176,8 @@ export function CheckoutFlow() {
     return s + unit * r.quantity;
   }, 0);
   const discount = compareSubtotal - subtotal;
-  const delivery = deliveryOptions.find((d) => d.id === deliveryId)!;
+  const delivery =
+    deliveryOptions.find((d) => d.id === deliveryId) ?? deliveryOptions[0];
   const deliveryFee = delivery.fee;
   const total = subtotal + deliveryFee;
 

@@ -20,7 +20,7 @@ export const heroSlides: HeroSlide[] = [
   {
     id: "hero-3",
     title: "عروض خاصة لفترة محدودة",
-    subtitle: "خصومات مميزة على أجمل النقشات مع توصيل إلى مختلف المناطق",
+    subtitle: "خصومات مميزة على أجمل النقشات مع خيارات توصيل مرنة حسب إعدادات المتجر",
     image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=1400&q=80",
     ctaPrimary: { label: "تسوقي الآن", href: "/offers" },
     ctaSecondary: { label: "شاهدي النقشات", href: "/new" },

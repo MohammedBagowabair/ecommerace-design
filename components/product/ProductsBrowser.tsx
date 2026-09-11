@@ -3,9 +3,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowUpDown, Filter, X } from "lucide-react";
 import { filterAndSortProducts, sortOptions } from "@/lib/catalog";
-import { categories } from "@/lib/data";
+import { categories as seedCategories } from "@/lib/data";
 import type { SortOption } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useAdminOpsStore } from "@/lib/store/admin-ops";
+import { mergeCategories, mergeProducts } from "@/lib/admin/merged-catalog";
 import { ProductGrid } from "./ProductGrid";
 import {
   ProductFiltersPanel,
@@ -40,6 +42,27 @@ export function ProductsBrowser({
   }));
   const [drawer, setDrawer] = useState(false);
   const [loading, setLoading] = useState(true);
+  const productOverrides = useAdminOpsStore((s) => s.productOverrides);
+  const customProducts = useAdminOpsStore((s) => s.customProducts);
+  const catOverrides = useAdminOpsStore((s) => s.categoryOverrides);
+  const customCategories = useAdminOpsStore((s) => s.customCategories);
+  const ensureOps = useAdminOpsStore((s) => s.ensureSeeded);
+
+  useEffect(() => {
+    ensureOps();
+  }, [ensureOps]);
+
+  const mergedProducts = useMemo(
+    () =>
+      mergeProducts(productOverrides, customProducts).filter(
+        (p) => p.isActive !== false
+      ),
+    [productOverrides, customProducts]
+  );
+  const categories = useMemo(
+    () => mergeCategories(catOverrides, mergedProducts, customCategories),
+    [catOverrides, mergedProducts, customCategories]
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -78,8 +101,10 @@ export function ProductsBrowser({
         query: initialQuery,
         onlyNew,
         onlyOffers,
+        sourceProducts: mergedProducts,
+        sourceCategories: categories.length ? categories : seedCategories,
       }),
-    [filters, initialQuery, onlyNew, onlyOffers]
+    [filters, initialQuery, onlyNew, onlyOffers, mergedProducts, categories]
   );
 
   const activeChips: { key: string; label: string; clear: () => void }[] = [];
@@ -91,6 +116,17 @@ export function ProductsBrowser({
         setFilters((f) => ({
           ...f,
           categories: f.categories.filter((c) => c !== slug),
+        })),
+    })
+  );
+  (filters.subcategories ?? []).forEach((slug) =>
+    activeChips.push({
+      key: `sub-${slug}`,
+      label: categories.find((c) => c.slug === slug)?.name ?? slug,
+      clear: () =>
+        setFilters((f) => ({
+          ...f,
+          subcategories: (f.subcategories ?? []).filter((c) => c !== slug),
         })),
     })
   );

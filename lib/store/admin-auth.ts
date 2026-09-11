@@ -5,6 +5,7 @@ import { persist } from "zustand/middleware";
 import type { AdminSession, Permission } from "../admin/types";
 import { seedAdminUsers, seedRoles } from "../admin/seed";
 import { useAdminDataStore } from "./admin-data";
+import { useAdminOpsStore } from "./admin-ops";
 
 interface AdminAuthState {
   session: AdminSession | null;
@@ -54,7 +55,18 @@ export const useAdminAuthStore = create<AdminAuthState>()(
           }
           const role = roles.find((r) => r.id === existing.roleId) ?? seedRoles[0];
           useAdminDataStore.getState().touchLastLogin(existing.id);
-          set({ session: buildSession(existing, role) });
+          const session = buildSession(existing, role);
+          set({ session });
+          try {
+            useAdminOpsStore.getState().addActivity({
+              action: "تسجيل دخول",
+              target: "لوحة الإدارة",
+              entityType: "auth",
+              entityId: session.userId,
+              actorName: session.name,
+              actorId: session.userId,
+            });
+          } catch { /* store may not be ready */ }
           return { ok: true };
         }
 
@@ -66,10 +78,37 @@ export const useAdminAuthStore = create<AdminAuthState>()(
           name: trimmed.split("@")[0] || "ضيف إداري",
           roleId: guestRole.id,
         };
-        set({ session: buildSession(guest, guestRole) });
+        const session = buildSession(guest, guestRole);
+        set({ session });
+        try {
+          useAdminOpsStore.getState().addActivity({
+            action: "تسجيل دخول",
+            target: "لوحة الإدارة",
+            entityType: "auth",
+            entityId: session.userId,
+            actorName: session.name,
+            actorId: session.userId,
+            meta: "جلسة ضيف",
+          });
+        } catch { /* ignore */ }
         return { ok: true };
       },
-      logout: () => set({ session: null }),
+      logout: () => {
+        const session = get().session;
+        if (session) {
+          try {
+            useAdminOpsStore.getState().addActivity({
+              action: "تسجيل خروج",
+              target: "لوحة الإدارة",
+              entityType: "auth",
+              entityId: session.userId,
+              actorName: session.name,
+              actorId: session.userId,
+            });
+          } catch { /* ignore */ }
+        }
+        set({ session: null });
+      },
       refreshSessionFromUser: (userId) => {
         const { users, roles } = useAdminDataStore.getState();
         const user = users.find((u) => u.id === userId);

@@ -2,19 +2,17 @@ import type { OrderStatus, PaymentStatus } from "./types";
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
   pending_payment: "بانتظار الدفع",
-  payment_review: "جاري مراجعة الدفع",
-  payment_confirmed: "تم تأكيد الدفع",
+  payment_review: "جاري مراجعة",
+  payment_confirmed: "تم الدفع",
   preparing: "جاري التجهيز",
-  ready_for_delivery: "جاهز للتوصيل",
-  out_for_delivery: "خرج للتوصيل",
   delivered: "تم التسليم",
   cancelled: "تم الإلغاء",
 };
 
 export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   pending: "بانتظار الدفع",
-  reviewing: "جاري مراجعة الدفع",
-  confirmed: "تم تأكيد الدفع",
+  reviewing: "جاري مراجعة",
+  confirmed: "تم الدفع",
   cancelled: "ملغي",
 };
 
@@ -24,8 +22,6 @@ export const ORDER_TIMELINE_STEPS: OrderStatus[] = [
   "payment_review",
   "payment_confirmed",
   "preparing",
-  "ready_for_delivery",
-  "out_for_delivery",
   "delivered",
 ];
 
@@ -58,10 +54,6 @@ export function getOrderStatusTone(status: OrderStatus): {
       return { bg: "bg-sky-50", text: "text-sky-800", ring: "ring-sky-200" };
     case "preparing":
       return { bg: "bg-indigo-50", text: "text-indigo-800", ring: "ring-indigo-200" };
-    case "ready_for_delivery":
-      return { bg: "bg-violet-50", text: "text-violet-800", ring: "ring-violet-200" };
-    case "out_for_delivery":
-      return { bg: "bg-blue-50", text: "text-blue-800", ring: "ring-blue-200" };
     case "delivered":
       return { bg: "bg-emerald-50", text: "text-emerald-800", ring: "ring-emerald-200" };
     case "cancelled":
@@ -86,6 +78,25 @@ export function getPaymentStatusTone(status: OrderStatus): {
 export function getTimelineIndex(status: OrderStatus): number {
   if (status === "cancelled") return -1;
   return ORDER_TIMELINE_STEPS.indexOf(status);
+}
+
+/** Migrate legacy 7-step statuses (and older aliases) to the simplified set */
+export function normalizeOrderStatus(status: string): OrderStatus {
+  if (status === "awaiting_receipt") return "payment_review";
+  if (status === "confirmed") return "payment_confirmed";
+  if (status === "ready_for_delivery" || status === "out_for_delivery") {
+    return "preparing";
+  }
+  const allowed: OrderStatus[] = [
+    "pending_payment",
+    "payment_review",
+    "payment_confirmed",
+    "preparing",
+    "delivered",
+    "cancelled",
+  ];
+  if ((allowed as string[]).includes(status)) return status as OrderStatus;
+  return "payment_review";
 }
 
 export function formatOrderDate(iso: string): string {

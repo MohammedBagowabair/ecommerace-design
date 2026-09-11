@@ -12,6 +12,8 @@ import { useToastStore } from "@/lib/store/toast";
 import { mergeProducts } from "@/lib/admin/merged-catalog";
 import { cn } from "@/lib/utils";
 import type { Offer } from "@/lib/types";
+import { MediaUploader } from "@/components/admin/media/MediaUploader";
+import { logAdminAudit } from "@/lib/admin/audit";
 
 const emptyForm = (): Offer => ({
   id: "",
@@ -79,6 +81,13 @@ export default function AdminOffersPage() {
       isActive: form.isActive !== false,
     };
     upsertOffer(payload);
+    logAdminAudit({
+      action: form.title && offers.some((o) => o.id === form.id) ? "تعديل عرض" : "إنشاء عرض",
+      target: payload.title,
+      entityType: "offer",
+      entityId: payload.id,
+      after: payload.isActive === false ? "معطّل" : "نشط",
+    });
     showToast("تم حفظ العرض", "success");
     setForm(null);
   };
@@ -254,6 +263,14 @@ export default function AdminOffersPage() {
                   onChange={(e) => setForm({ ...form, badge: e.target.value })}
                 />
               </label>
+              <MediaUploader
+                label="صورة العرض"
+                values={form.image ? [form.image] : []}
+                onChange={(vals) => setForm({ ...form, image: vals[0] })}
+                max={1}
+                allowVideo={false}
+                accept="image/*"
+              />
               <label className="flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"

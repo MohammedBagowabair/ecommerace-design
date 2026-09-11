@@ -15,6 +15,7 @@ import {
 } from "@/components/account/StatusBadge";
 import { useAdminAuthStore } from "@/lib/store/admin-auth";
 import { useToastStore } from "@/lib/store/toast";
+import { logAdminAudit } from "@/lib/admin/audit";
 import { useAdminOrders } from "@/lib/admin/use-admin-orders";
 import {
   addressLabelText,
@@ -254,7 +255,19 @@ export default function AdminOrderDetailPage() {
                       actorName: session?.name ?? "مشرف",
                       action: "تحديث حالة طلب",
                       target: order.id,
+                      entityType: "order",
+                      entityId: order.id,
+                      before: ORDER_STATUS_LABELS[order.status],
+                      after: ORDER_STATUS_LABELS[effectiveStatus],
                       meta: ORDER_STATUS_LABELS[effectiveStatus],
+                    });
+                    logAdminAudit({
+                      action: "تحديث حالة طلب",
+                      target: order.id,
+                      entityType: "order",
+                      entityId: order.id,
+                      before: ORDER_STATUS_LABELS[order.status],
+                      after: ORDER_STATUS_LABELS[effectiveStatus],
                     });
                     setStatusDraft("");
                     setNotesDraft(null);
