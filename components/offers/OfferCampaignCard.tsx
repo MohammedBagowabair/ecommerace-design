@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
 import type { Offer } from "@/lib/types";
+import { getOfferHref } from "@/lib/data/offers";
 import { DiscountBadge } from "@/components/ui/Badge";
 import { CountdownTimer, formatOfferEndDate } from "@/components/ui/Countdown";
 import { cn } from "@/lib/utils";
@@ -15,7 +16,7 @@ export function OfferCampaignCard({
   offer: Offer;
   featured?: boolean;
 }) {
-  const href = offer.href ?? `/offers#${offer.id}`;
+  const href = getOfferHref(offer.id);
 
   return (
     <article

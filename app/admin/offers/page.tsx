@@ -12,6 +12,7 @@ import { useToastStore } from "@/lib/store/toast";
 import { mergeProducts } from "@/lib/admin/merged-catalog";
 import { cn } from "@/lib/utils";
 import type { Offer } from "@/lib/types";
+import { getOfferHref } from "@/lib/data/offers";
 import { MediaUploader } from "@/components/admin/media/MediaUploader";
 import { logAdminAudit } from "@/lib/admin/audit";
 
@@ -76,7 +77,7 @@ export default function AdminOffersPage() {
       endsAt: form.endsAt
         ? new Date(form.endsAt).toISOString()
         : undefined,
-      href: form.href || `/offers#${form.id}`,
+      href: getOfferHref(form.id),
       discountPercent: Math.max(1, Math.min(90, Number(form.discountPercent) || 1)),
       isActive: form.isActive !== false,
     };

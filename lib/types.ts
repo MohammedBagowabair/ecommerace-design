@@ -82,7 +82,7 @@ export interface Offer {
   image?: string;
   /** Short marketing chip, e.g. عروس · عيد */
   badge?: string;
-  /** Optional deep-link override */
+  /** Canonical storefront path, e.g. /offers/offer-1 */
   href?: string;
   /** Admin soft-disable; storefront ignores when undefined/true */
   isActive?: boolean;

@@ -10,7 +10,7 @@ export const offers: Offer[] = [
     endsAt: "2026-10-15T23:59:59+03:00",
     image: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
     badge: "مجموعة العروس",
-    href: "/offers#offer-1",
+    href: "/offers/offer-1",
   },
   {
     id: "offer-2",
@@ -21,7 +21,7 @@ export const offers: Offer[] = [
     endsAt: "2026-09-30T23:59:59+03:00",
     image: "https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?w=800&q=80",
     badge: "يومية ناعمة",
-    href: "/offers#offer-2",
+    href: "/offers/offer-2",
   },
   {
     id: "offer-3",
@@ -32,7 +32,7 @@ export const offers: Offer[] = [
     endsAt: "2026-10-05T23:59:59+03:00",
     image: "https://images.unsplash.com/photo-1606800052052-a08af7148866?w=800&q=80",
     badge: "عيد ومناسبات",
-    href: "/offers#offer-3",
+    href: "/offers/offer-3",
   },
   {
     id: "offer-4",
@@ -43,7 +43,7 @@ export const offers: Offer[] = [
     endsAt: "2026-10-20T23:59:59+03:00",
     image: "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?w=800&q=80",
     badge: "خطوبة",
-    href: "/offers#offer-4",
+    href: "/offers/offer-4",
   },
   {
     id: "offer-5",
@@ -54,9 +54,24 @@ export const offers: Offer[] = [
     endsAt: "2026-09-25T23:59:59+03:00",
     image: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?w=800&q=80",
     badge: "حفلة",
-    href: "/offers#offer-5",
+    href: "/offers/offer-5",
   },
 ];
+
+/** Dedicated storefront page for one campaign. */
+export function getOfferHref(id: string): string {
+  return `/offers/${encodeURIComponent(id)}`;
+}
+
+export function getOfferById(id: string): Offer | undefined {
+  let decoded = id;
+  try {
+    decoded = decodeURIComponent(id);
+  } catch {
+    decoded = id;
+  }
+  return offers.find((o) => o.id === id || o.id === decoded);
+}
 
 /** Resolve the soonest active campaign end date for a product */
 export function getOfferEndsAtForProduct(productId: string): string | undefined {

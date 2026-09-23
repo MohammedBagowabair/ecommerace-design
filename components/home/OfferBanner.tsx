@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Offer } from "@/lib/types";
+import { getOfferHref } from "@/lib/data/offers";
 import { DiscountBadge } from "@/components/ui/Badge";
 import { CountdownTimer } from "@/components/ui/Countdown";
 
@@ -40,10 +41,10 @@ export function OfferBanner({ offer }: { offer: Offer }) {
           )}
         </div>
         <Link
-          href={offer.href ?? "/offers"}
+          href={getOfferHref(offer.id)}
           className="btn-primary min-h-11 w-full shrink-0 bg-white text-ink hover:bg-cream-100 sm:w-auto"
         >
-          تسوّقي العروض
+          تسوّقي العرض
         </Link>
       </div>
     </div>
