@@ -31,6 +31,22 @@ export function formatYerPerSarRate(yerPerSar?: number | null): string {
   return `1 ر.س = ${yerPerSar.toLocaleString("ar-YE")} ر.ي`;
 }
 
+/** Offer end timestamp for display. Safe to call from server components. */
+export function formatOfferEndDate(endsAt: string): string {
+  try {
+    return new Intl.DateTimeFormat("ar-YE", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: "Asia/Riyadh",
+    }).format(new Date(endsAt));
+  } catch {
+    return endsAt;
+  }
+}
+
 export function getDiscountPercent(price: number, compareAt?: number): number | null {
   if (!compareAt || compareAt <= price) return null;
   return Math.round(((compareAt - price) / compareAt) * 100);
