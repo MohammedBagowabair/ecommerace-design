@@ -149,17 +149,4 @@ export function CountdownTimer({
   );
 }
 
-export function formatOfferEndDate(endsAt: string): string {
-  try {
-    return new Intl.DateTimeFormat("ar-YE", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      timeZone: "Asia/Riyadh",
-    }).format(new Date(endsAt));
-  } catch {
-    return endsAt;
-  }
-}
+export { formatOfferEndDate } from "@/lib/utils";

@@ -5,7 +5,8 @@ import { notFound } from "next/navigation";
 import { ChevronRight, Sparkles } from "lucide-react";
 import { OfferCard } from "@/components/offers/OfferCard";
 import { DiscountBadge } from "@/components/ui/Badge";
-import { CountdownTimer, formatOfferEndDate } from "@/components/ui/Countdown";
+import { CountdownTimer } from "@/components/ui/Countdown";
+import { formatOfferEndDate } from "@/lib/utils";
 import {
   offers,
   getOfferById,
